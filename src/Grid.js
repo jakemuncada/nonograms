@@ -20,7 +20,7 @@ class Grid extends React.Component {
         let board = [];
         for (let rowIdx = 0; rowIdx < ROWS; rowIdx++) {
             for (let colIdx = 0; colIdx < COLS; colIdx++) {
-                board.push(<Cell row={rowIdx} col={colIdx} />);
+                board.push(<Cell key={rowIdx * COLS + colIdx} row={rowIdx} col={colIdx} />);
             }
         }
 

@@ -9,3 +9,11 @@
     cursor: pointer;
     border: 1px solid black;
 }
+
+.nodrag {
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
