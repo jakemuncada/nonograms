@@ -1,24 +1,31 @@
 import React from "react";
+import { connect } from "react-redux";
 import "./Board.css";
 
-function Grid(props) {
-    const { rows, cols } = props;
+import Cell from "./Cell";
 
-    let board = [];
-    for (let rowIdx = 0; rowIdx < rows; rowIdx++) {
-        for (let colIdx = 0; colIdx < cols; colIdx++) {
-            let color = rowIdx % 2 == 0 ? (colIdx % 2 == 0 ? 'grey' : 'white') : (colIdx % 2 == 0 ? 'white' : 'grey');
-            const style = { gridRow: rowIdx + 1, gridCol: colIdx + 1, backgroundColor: color }
-            let cell = (
-                <div key={rowIdx * cols + colIdx} style={style} className="cell">
-                    
-                </div>
-            );
-            board.push(cell);
+const mapStateToProps = (state) => {
+    return {
+        ROWS: state.board.rows,
+        COLS: state.board.cols,
+        cellWidth: state.board.cellWidth,
+        cellHeight: state.board.cellHeight,
+    };
+};
+
+class Grid extends React.Component {
+    render() {
+        const { ROWS, COLS } = this.props;
+
+        let board = [];
+        for (let rowIdx = 0; rowIdx < ROWS; rowIdx++) {
+            for (let colIdx = 0; colIdx < COLS; colIdx++) {
+                board.push(<Cell row={rowIdx} col={colIdx} />);
+            }
         }
-    }
 
-    return <div className='board'>{board}</div>;
+        return <div className="board">{board}</div>;
+    }
 }
 
-export default Grid;
+export default connect(mapStateToProps)(Grid);
