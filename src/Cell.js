@@ -2,6 +2,8 @@ import React from "react";
 import { connect } from "react-redux";
 import { startDrag, endDrag, moveDrag } from "./redux/actions/interaction";
 
+const MOUSE_LEFT = 0;
+
 const isHighlight = (isDragging, sRow, sCol, eRow, eCol, row, col) => {
     if (isDragging === false) {
         return false;
@@ -75,10 +77,12 @@ class Cell extends React.Component {
         return this.props.isHighlight !== nextProps.isHighlight;
     }
 
-    handleMouseDown() {
-        const { row, col } = this.props;
-        this.props.startDrag(row, col);
-        document.addEventListener("mouseup", this.handleMouseUp);
+    handleMouseDown(e) {
+        if (e.button === MOUSE_LEFT) {
+            const { row, col } = this.props;
+            this.props.startDrag(row, col);
+            document.addEventListener("mouseup", this.handleMouseUp);
+        }
     }
 
     handleMouseUp() {
@@ -110,7 +114,7 @@ class Cell extends React.Component {
                 key={row * COLS + col}
                 style={style}
                 className="cell nodrag"
-                onMouseDown={() => this.handleMouseDown()}
+                onMouseDown={(e) => this.handleMouseDown(e)}
                 onMouseMove={() => this.handleMouseMove()}
             ></div>
         );
