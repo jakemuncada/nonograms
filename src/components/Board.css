@@ -6,6 +6,7 @@
 .grid-container {
     width: 662px;
     height: 662px;
+    overflow: hidden;
     background-color: gold;
 }
 

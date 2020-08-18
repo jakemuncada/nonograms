@@ -1,11 +1,11 @@
-import { ADJUST_SIZE } from "../actionTypes";
+import { ADJUST_SIZE, ADJUST_POS } from "../actionTypes";
 import { CELL_WIDTH_MIN, CELL_HEIGHT_MIN } from "../../constants";
 
 const initialState = {
     rows: 30,
     cols: 30,
-    x: 0,
-    y: 0,
+    boardPosX: 0,
+    boardPosY: 0,
     cellWidth: 20,
     cellHeight: 20,
 };
@@ -22,6 +22,13 @@ export default function (state = initialState, action) {
                 ...state,
                 cellWidth: newWidth,
                 cellHeight: newHeight,
+            };
+        case ADJUST_POS:
+            const { newPosX, newPosY } = action.payload;
+            return {
+                ...state,
+                boardPosX: newPosX,
+                boardPosY: newPosY,
             };
         default:
             return state;

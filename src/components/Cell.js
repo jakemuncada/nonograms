@@ -1,8 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { startDraw, endDraw, moveDraw } from "../redux/actions/interaction";
-
-const MOUSE_LEFT = 0;
+import { MOUSE_LEFT_BTN } from "../constants";
 
 const isHighlight = (isDrawing, sRow, sCol, eRow, eCol, row, col) => {
     if (isDrawing === false) {
@@ -79,7 +78,7 @@ class Cell extends React.Component {
     }
 
     handleMouseDown(e) {
-        if (e.button === MOUSE_LEFT) {
+        if (e.button === MOUSE_LEFT_BTN) {
             const { row, col } = this.props;
             this.props.startDraw(row, col);
             document.addEventListener("mouseup", this.handleMouseUp);

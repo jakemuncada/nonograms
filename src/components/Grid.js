@@ -10,7 +10,7 @@ const mapStateToProps = (state) => {
         ROWS: state.board.rows,
         COLS: state.board.cols,
         cellWidth: state.board.cellWidth,
-        cellHeight: state.board.cellHeight,
+        cellHeight: state.board.cellHeight
     };
 };
 
@@ -27,18 +27,18 @@ class Grid extends React.Component {
     }
 
     componentDidMount() {
-        document.addEventListener("wheel", this.handleMouseWheel, false);
+        document.addEventListener("wheel", this.handleMouseWheel);
     }
 
     componentWillUnmount() {
-        document.removeEventListener("wheel", this.handleMouseWheel, false);
+        document.removeEventListener("wheel", this.handleMouseWheel);
     }
 
     handleMouseWheel(e) {
         e.preventDefault();
         if (e.deltaY !== 0) {
             const pxDelta = (e.deltaY * -1) / 66.0;
-            this.props.setCellSize( pxDelta, pxDelta );
+            this.props.setCellSize(pxDelta, pxDelta);
         }
         return false;
     }
@@ -61,7 +61,7 @@ class Grid extends React.Component {
             }
         }
 
-        return <div className="board">{board}</div>;
+        return <>{board}</>;
     }
 }
 
