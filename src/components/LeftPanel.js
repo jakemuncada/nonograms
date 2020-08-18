@@ -52,7 +52,9 @@ class LeftPanel extends React.Component {
             }
         }
 
-        return <div className="grid">{cells}</div>;
+        const gridStyle = { gridTemplateColumns: "repeat(" + cols + ", 1fr)" }
+
+        return <div className="grid" style={gridStyle}>{cells}</div>;
     }
 }
 
