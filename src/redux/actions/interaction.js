@@ -1,19 +1,19 @@
-const { START_DRAG, END_DRAG, MOVE_DRAG } = require("../actionTypes");
+const { START_DRAW, END_DRAW, MOVE_DRAW } = require("../actionTypes");
 
-export const startDrag = (row, col) => ({
-    type: START_DRAG,
+export const startDraw = (row, col) => ({
+    type: START_DRAW,
     payload: {
         row: row,
         col: col,
     },
 });
 
-export const endDrag = () => ({
-    type: END_DRAG,
+export const endDraw = () => ({
+    type: END_DRAW,
 });
 
-export const moveDrag = (row, col) => ({
-    type: MOVE_DRAG,
+export const moveDraw = (row, col) => ({
+    type: MOVE_DRAW,
     payload: {
         row: row,
         col: col,

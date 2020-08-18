@@ -1,42 +1,42 @@
-import { START_DRAG, END_DRAG, MOVE_DRAG } from "../actionTypes";
+import { START_DRAW, END_DRAW, MOVE_DRAW } from "../actionTypes";
 
 const initialState = {
-    isDragging: false,
-    dragStartRow: 0,
-    dragStartCol: 0,
-    dragEndRow: 0,
-    dragEndCol: 0,
+    isDrawing: false,
+    drawStartRow: 0,
+    drawStartCol: 0,
+    drawEndRow: 0,
+    drawEndCol: 0,
 };
 
 export default function (state = initialState, action) {
     let row, col;
 
     switch (action.type) {
-        case START_DRAG:
+        case START_DRAW:
             ({ row, col } = action.payload);
             return {
                 ...state,
-                isDragging: true,
-                dragStartRow: row,
-                dragStartCol: col,
-                dragEndRow: row,
-                dragEndCol: col,
+                isDrawing: true,
+                drawStartRow: row,
+                drawStartCol: col,
+                drawEndRow: row,
+                drawEndCol: col,
             };
-        case END_DRAG:
+        case END_DRAW:
             return {
                 ...state,
-                isDragging: false,
-                dragStartRow: 0,
-                dragStartCol: 0,
-                dragEndRow: 0,
-                dragEndCol: 0,
+                isDrawing: false,
+                drawStartRow: 0,
+                drawStartCol: 0,
+                drawEndRow: 0,
+                drawEndCol: 0,
             };
-        case MOVE_DRAG:
+        case MOVE_DRAW:
             ({ row, col } = action.payload);
             return {
                 ...state,
-                dragEndRow: row,
-                dragEndCol: col,
+                drawEndRow: row,
+                drawEndCol: col,
             };
         default:
             return state;

@@ -1,11 +1,11 @@
 import React from "react";
 import { connect } from "react-redux";
-import { startDrag, endDrag, moveDrag } from "./redux/actions/interaction";
+import { startDraw, endDraw, moveDraw } from "./redux/actions/interaction";
 
 const MOUSE_LEFT = 0;
 
-const isHighlight = (isDragging, sRow, sCol, eRow, eCol, row, col) => {
-    if (isDragging === false) {
+const isHighlight = (isDrawing, sRow, sCol, eRow, eCol, row, col) => {
+    if (isDrawing === false) {
         return false;
     }
     if (row === sRow && col === sCol) {
@@ -14,10 +14,10 @@ const isHighlight = (isDragging, sRow, sCol, eRow, eCol, row, col) => {
 
     const horiDelta = eCol - sCol;
     const vertDelta = eRow - sRow;
-    const isVerticalDrag = Math.abs(vertDelta) > Math.abs(horiDelta);
+    const isVerticalDraw = Math.abs(vertDelta) > Math.abs(horiDelta);
 
-    // Horizontal Drag
-    if (row === sRow && isVerticalDrag === false) {
+    // Horizontal Draw
+    if (row === sRow && isVerticalDraw === false) {
         if (col >= sCol && col <= eCol) {
             return true;
         }
@@ -26,8 +26,8 @@ const isHighlight = (isDragging, sRow, sCol, eRow, eCol, row, col) => {
         }
     }
 
-    // Vertical Drag
-    if (col === sCol && isVerticalDrag === true) {
+    // Vertical Draw
+    if (col === sCol && isVerticalDraw === true) {
         if (row >= sRow && row <= eRow) {
             return true;
         }
@@ -40,25 +40,25 @@ const isHighlight = (isDragging, sRow, sCol, eRow, eCol, row, col) => {
 };
 
 const mapStateToProps = (state, ownProps) => {
-    const { dragStartRow, dragStartCol, dragEndRow, dragEndCol, isDragging } = state.interaction;
+    const { drawStartRow, drawStartCol, drawEndRow, drawEndCol, isDrawing } = state.interaction;
     const ownRow = ownProps.row;
     const ownCol = ownProps.col;
 
     return {
         COLS: state.board.cols,
-        isDragging: isDragging,
-        isHighlight: isHighlight(isDragging, dragStartRow, dragStartCol, dragEndRow, dragEndCol, ownRow, ownCol),
+        isDrawing: isDrawing,
+        isHighlight: isHighlight(isDrawing, drawStartRow, drawStartCol, drawEndRow, drawEndCol, ownRow, ownCol),
     };
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => {
     return {
-        startDrag: (row, col) => dispatch(startDrag(row, col)),
-        endDrag: () => dispatch(endDrag()),
-        moveDrag: (row, col, isDragging) => {
-            if (isDragging) {
-                if (row !== ownProps.dragEndRow || col !== ownProps.dragEndCol) {
-                    dispatch(moveDrag(row, col));
+        startDraw: (row, col) => dispatch(startDraw(row, col)),
+        endDraw: () => dispatch(endDraw()),
+        moveDraw: (row, col, isDrawing) => {
+            if (isDrawing) {
+                if (row !== ownProps.drawEndRow || col !== ownProps.drawEndCol) {
+                    dispatch(moveDraw(row, col));
                 }
             }
         },
@@ -80,19 +80,19 @@ class Cell extends React.Component {
     handleMouseDown(e) {
         if (e.button === MOUSE_LEFT) {
             const { row, col } = this.props;
-            this.props.startDrag(row, col);
+            this.props.startDraw(row, col);
             document.addEventListener("mouseup", this.handleMouseUp);
         }
     }
 
     handleMouseUp() {
-        this.props.endDrag();
+        this.props.endDraw();
         document.removeEventListener("mouseup", this.handleMouseUp);
     }
 
     handleMouseMove() {
-        const { row, col, isDragging, moveDrag } = this.props;
-        moveDrag(row, col, isDragging);
+        const { row, col, isDrawing, moveDraw } = this.props;
+        moveDraw(row, col, isDrawing);
     }
 
     render() {
