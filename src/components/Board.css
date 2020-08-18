@@ -3,6 +3,12 @@
     border: 1px solid black;
 }
 
+.grid-container {
+    width: 662px;
+    height: 662px;
+    background-color: gold;
+}
+
 .cell {
     cursor: pointer;
     border: 1px solid black;
