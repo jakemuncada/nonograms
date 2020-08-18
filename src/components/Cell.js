@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { startDraw, endDraw, moveDraw } from "./redux/actions/interaction";
+import { startDraw, endDraw, moveDraw } from "../redux/actions/interaction";
 
 const MOUSE_LEFT = 0;
 
@@ -74,7 +74,8 @@ class Cell extends React.Component {
     }
 
     shouldComponentUpdate(nextProps) {
-        return this.props.isHighlight !== nextProps.isHighlight;
+        const { width, height, isHighlight } = this.props;
+        return isHighlight !== nextProps.isHighlight || width !== nextProps.width || height !== nextProps.height;
     }
 
     handleMouseDown(e) {
@@ -96,7 +97,7 @@ class Cell extends React.Component {
     }
 
     render() {
-        const { COLS, row, col, isHighlight } = this.props;
+        const { COLS, row, col, width, height, isHighlight } = this.props;
 
         let color = row % 2 === 0 ? (col % 2 === 0 ? "grey" : "white") : col % 2 === 0 ? "white" : "grey";
         if (isHighlight) {
@@ -106,6 +107,8 @@ class Cell extends React.Component {
         const style = {
             gridRow: row + 1,
             gridCol: col + 1,
+            width: width,
+            height: height,
             backgroundColor: color,
         };
 
