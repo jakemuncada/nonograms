@@ -1,18 +1,54 @@
 .board {
     display: grid;
-    border: 1px solid black;
 }
 
-.grid-container {
-    width: 662px;
-    height: 662px;
+#top-container {
+    height: 160px;
+    grid-row: 1;
+    grid-column: 2;
+    border-color: black;
+    border-style: solid;
+    border-width: 1px 1px 0 1px;
+    background-color: #454545;
+}
+
+#left-container {
+    width: 220px;
+    grid-row: 2;
+    grid-column: 1;
+    border-color: black;
+    border-style: solid;
+    border-width: 2px 0 2px 2px;
+    background-color: #454545;
+}
+
+#grid-container {
     overflow: hidden;
+    grid-row: 2;
+    grid-column: 2;
     background-color: gold;
+}
+
+.grid {
+    height: 100%;
+    display: grid;
+    align-content: stretch;
+}
+
+.bordered {
+    border: 1px solid black;
 }
 
 .cell {
     cursor: pointer;
-    border: 1px solid black;
+}
+
+.clue-cell {
+    font-size: 10px;
+}
+
+.top-panel-cell {
+    cursor: pointer;
 }
 
 .nodrag {

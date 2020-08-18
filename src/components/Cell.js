@@ -105,7 +105,7 @@ class Cell extends React.Component {
 
         const style = {
             gridRow: row + 1,
-            gridCol: col + 1,
+            gridColumn: col + 1,
             width: width,
             height: height,
             backgroundColor: color,
@@ -115,7 +115,7 @@ class Cell extends React.Component {
             <div
                 key={row * COLS + col}
                 style={style}
-                className="cell nodrag"
+                className="cell nodrag bordered"
                 onMouseDown={(e) => this.handleMouseDown(e)}
                 onMouseMove={() => this.handleMouseMove()}
             ></div>
