@@ -13,11 +13,11 @@ class TopPanel extends React.Component {
         let cellData = [];
 
         for (let col = 0; col < cols; col++) {
-            let colArr = [];
+            let arr = [];
             for (let row = 0; row < rows; row++) {
-                colArr.push(0);
+                arr.push(0);
             }
-            cellData.push(colArr);
+            cellData.push(arr);
         }
 
         for (let col = 0; col < data.length; col++) {

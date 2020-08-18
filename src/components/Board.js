@@ -2,6 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import Grid from "./Grid";
 import TopPanel from "./TopPanel";
+import LeftPanel from "./LeftPanel";
 
 const mapStateToProps = (state) => {
     return {
@@ -24,7 +25,9 @@ class Board extends React.Component {
                 <div id="grid-container">
                     <Grid rows={rows} cols={cols} cellWidth={cellWidth} cellHeight={cellHeight} />
                 </div>
-                <div id="left-container"></div>
+                <div id="left-container">
+                    <LeftPanel data={this.props.data.left} cellHeight={cellHeight} />
+                </div>
             </div>
         );
     }
