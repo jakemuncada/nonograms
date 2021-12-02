@@ -46,7 +46,8 @@ const mapStateToProps = (state, ownProps) => {
     return {
         cols: state.board.cols,
         isDrawing: isDrawing,
-        isHighlight: isHighlight(isDrawing, drawStartRow, drawStartCol, drawEndRow, drawEndCol, ownRow, ownCol),
+        isHighlight: isHighlight(isDrawing, drawStartRow, drawStartCol,
+            drawEndRow, drawEndCol, ownRow, ownCol),
     };
 };
 
@@ -65,19 +66,13 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 };
 
 class Cell extends React.Component {
-    constructor(props) {
-        super(props);
-        this.handleMouseDown = this.handleMouseDown.bind(this);
-        this.handleMouseUp = this.handleMouseUp.bind(this);
-        this.handleMouseMove = this.handleMouseMove.bind(this);
-    }
-
+    
     shouldComponentUpdate(nextProps) {
         const { width, height, isHighlight } = this.props;
         return isHighlight !== nextProps.isHighlight || width !== nextProps.width || height !== nextProps.height;
     }
 
-    handleMouseDown(e) {
+    handleMouseDown = (e) => {
         if (e.button === MOUSE_LEFT_BTN) {
             const { row, col } = this.props;
             this.props.startDraw(row, col);
@@ -85,12 +80,12 @@ class Cell extends React.Component {
         }
     }
 
-    handleMouseUp() {
+    handleMouseUp = () => {
         this.props.endDraw();
         document.removeEventListener("mouseup", this.handleMouseUp);
     }
 
-    handleMouseMove() {
+    handleMouseMove = () => {
         const { row, col, isDrawing, moveDraw } = this.props;
         moveDraw(row, col, isDrawing);
     }
