@@ -3,7 +3,8 @@ import { CELL_WIDTH_MIN, CELL_HEIGHT_MIN } from "./constants";
 export const calcCellSize = (rows, boardHeight, cols, boardWidth) => {
     const width = boardWidth / cols;
     const height = boardHeight / rows;
-    return Math.max(width, height);
+    let cellSize = Math.max(width, height);
+    return Math.floor(cellSize);
 }
 
 export const calcMinBoardWidth = (cols) => {

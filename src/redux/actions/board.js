@@ -1,9 +1,16 @@
-import { ADJUST_BOARD_SIZE } from "../actionTypes";
+import { ADJUST_BOARD_SIZE, ADJUST_CELL_SIZE } from "../actionTypes";
 
-export const adjustCellSize = (newWidth, newHeight) => ({
+export const adjustBoardSize = (widthAdj, heightAdj) => ({
     type: ADJUST_BOARD_SIZE,
     payload: {
-        width: newWidth,
-        height: newHeight,
+        width: widthAdj,
+        height: heightAdj,
+    },
+});
+
+export const adjustCellSize = (amount) => ({
+    type: ADJUST_CELL_SIZE,
+    payload: {
+        amount: amount
     },
 });
