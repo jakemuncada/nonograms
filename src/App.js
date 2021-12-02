@@ -24,9 +24,9 @@ function App(props) {
 
     return (
         <div className="App">
-            <header className="App-header">
+            <div className="App-body">
                 <Board data={puzzleData} />
-            </header>
+            </div>
         </div>
     );
 }
