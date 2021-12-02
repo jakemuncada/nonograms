@@ -1,7 +1,6 @@
 import { combineReducers } from "redux";
 import board from "./board";
+import clues from "./clues";
 import interaction from "./interaction";
 
-document.addEventListener('contextmenu', event => event.preventDefault());
-
-export default combineReducers({ board, interaction });
+export default combineReducers({ board, clues, interaction });

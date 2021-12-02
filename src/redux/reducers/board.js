@@ -1,25 +1,39 @@
-import { ADJUST_SIZE } from "../actionTypes";
-import { CELL_WIDTH_MIN, CELL_HEIGHT_MIN } from "../../constants";
+import { ADJUST_BOARD_SIZE } from "../actionTypes";
+import { calcMinBoardWidth, calcMinBoardHeight, calcCellSize } from "../../utils";
 
 const initialState = {
     rows: 30,
     cols: 30,
-    cellWidth: 22,
-    cellHeight: 22,
+    boardWidth: 660,
+    boardHeight: 660,
+    cellSize: calcCellSize(30, 660, 30, 660),
+    topCluesRows: 0,
+    topCluesArr: []
 };
 
 export default function (state = initialState, action) {
     switch (action.type) {
-        case ADJUST_SIZE:
+        case ADJUST_BOARD_SIZE:
             const { width, height } = action.payload;
-            let newWidth = state.cellWidth + width;
-            let newHeight = state.cellHeight + height;
-            newWidth = Math.max(newWidth, CELL_WIDTH_MIN);
-            newHeight = Math.max(newHeight, CELL_HEIGHT_MIN);
+            let newBoardWidth = state.boardWidth + width;
+            let newBoardHeight = state.boardHeight + height;
+
+            newBoardWidth = Math.floor(newBoardWidth);
+            newBoardHeight = Math.floor(newBoardHeight);
+
+            const minBoardWidth = calcMinBoardWidth(state.cols);
+            const minBoardHeight = calcMinBoardHeight(state.rows);
+
+            newBoardWidth = Math.max(newBoardWidth, minBoardWidth);
+            newBoardHeight = Math.max(newBoardHeight, minBoardHeight);
+
+            const newCellSize = calcCellSize(state.rows, newBoardHeight, state);
+
             return {
                 ...state,
-                cellWidth: newWidth,
-                cellHeight: newHeight,
+                boardWidth: newBoardWidth,
+                boardHeight: newBoardHeight,
+                cellSize: newCellSize
             };
         default:
             return state;

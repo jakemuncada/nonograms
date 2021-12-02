@@ -6,6 +6,8 @@ import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 
+document.addEventListener('contextmenu', event => event.preventDefault());
+
 ReactDOM.render(
     <React.StrictMode>
         <Provider store={store}>

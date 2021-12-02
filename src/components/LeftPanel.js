@@ -30,31 +30,36 @@ class LeftPanel extends React.Component {
     }
 
     render() {
-        let { data, cellHeight } = this.props;
+        let { rows, cols, data, cellSize } = this.props;
+
         if (data === null || data.length <= 0) {
             return null;
         }
 
-        let cells = [];
-        const cols = this.getMaxNumOfCols(data);
-        data = this.processData(data, data.length, cols);
-
-        for (let row = 0; row < data.length; row++) {
-            for (let col = 0; col < data[row].length; col++) {
-                const num = data[row][col] === 0 ? " " : data[row][col];
-                const myCol = cols - col;
-                const style = { gridRow: row + 1, gridColumn: myCol, height: cellHeight };
-                cells.push(
-                    <div key={cols * row + col} className="cell bordered clue-cell" style={style}>
-                        <span className="num"><b>{num}</b></span>
-                    </div>
-                );
-            }
+        if (rows === 0 || cols === 0 || data.length === 0) {
+            return null;
         }
 
-        const gridStyle = { gridTemplateColumns: "repeat(" + cols + ", 1fr)" }
+        if (data.length !== rows || data[0].length !== cols) {
+            return null;
+        }
 
-        return <div className="grid" style={gridStyle}>{cells}</div>;
+        let tableRows = [];
+        for (let row = 0; row < rows; row++) {
+            let rowCells = [];
+            for (let col = 0; col < cols; col++) {
+                const num = data[row][col] === null ? " " : data[row][col];
+                rowCells.push(
+                    <td key={rows * col + row} className="cell bordered clue-cell"
+                        width={cellSize} height={cellSize}>
+                        <b>{num}</b>
+                    </td>
+                );
+            }
+            tableRows.push(<tr key={row}>{rowCells}</tr>)
+        }
+
+        return <table id="left-table"><tbody>{tableRows}</tbody></table>;
     }
 }
 

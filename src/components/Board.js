@@ -8,25 +8,41 @@ const mapStateToProps = (state) => {
     return {
         rows: state.board.rows,
         cols: state.board.cols,
-        cellWidth: state.board.cellWidth,
-        cellHeight: state.board.cellHeight,
+        boardWidth: state.board.boardWidth,
+        boardHeight: state.board.boardHeight,
+        cellSize: state.board.cellSize,
+        topClueRows: state.clues.topClueRows,
+        topClueCols: state.clues.topClueCols,
+        topClueData: state.clues.topClueData,
+        leftClueRows: state.clues.leftClueRows,
+        leftClueCols: state.clues.leftClueCols,
+        leftClueData: state.clues.leftClueData,
     };
 };
 
 class Board extends React.Component {
     render() {
-        const { rows, cols, cellWidth, cellHeight } = this.props;
+        const { 
+            rows, cols,
+            boardWidth, boardHeight, cellSize,
+            topClueRows, topClueCols, leftClueRows, leftClueCols,
+            topClueData, leftClueData
+         } = this.props;
 
         return (
             <div className="board">
                 <div id="top-container">
-                    <TopPanel data={this.props.data.top} cellWidth={cellWidth} />
+                    <TopPanel rows={topClueRows} cols={topClueCols} 
+                        data={topClueData} cellSize={cellSize} />
                 </div>
                 <div id="grid-container">
-                    <Grid rows={rows} cols={cols} cellWidth={cellWidth} cellHeight={cellHeight} />
+                    <Grid
+                        rows={rows} cols={cols} cellSize={cellSize}
+                        boardWidth={boardWidth} boardHeight={boardHeight} />
                 </div>
                 <div id="left-container">
-                    <LeftPanel data={this.props.data.left} cellHeight={cellHeight} />
+                    <LeftPanel rows={leftClueRows} cols={leftClueCols} 
+                        data={leftClueData} cellSize={cellSize} />
                 </div>
             </div>
         );

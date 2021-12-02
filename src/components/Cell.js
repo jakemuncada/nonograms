@@ -44,7 +44,7 @@ const mapStateToProps = (state, ownProps) => {
     const ownCol = ownProps.col;
 
     return {
-        COLS: state.board.cols,
+        cols: state.board.cols,
         isDrawing: isDrawing,
         isHighlight: isHighlight(isDrawing, drawStartRow, drawStartCol, drawEndRow, drawEndCol, ownRow, ownCol),
     };
@@ -96,29 +96,22 @@ class Cell extends React.Component {
     }
 
     render() {
-        const { COLS, row, col, width, height, isHighlight } = this.props;
-
-        let color = row % 2 === 0 ? (col % 2 === 0 ? "grey" : "white") : col % 2 === 0 ? "white" : "grey";
-        if (isHighlight) {
-            color = "gold";
-        }
+        const { cols, row, col, width, height, isHighlight } = this.props;
 
         const style = {
-            gridRow: row + 1,
-            gridColumn: col + 1,
             width: width,
             height: height,
-            backgroundColor: color,
+            backgroundColor: (isHighlight) ? "gold" : "#f0f0f0",
         };
 
         return (
-            <div
-                key={row * COLS + col}
+            <td
+                key={row * cols + col}
                 style={style}
                 className="cell nodrag bordered"
                 onMouseDown={(e) => this.handleMouseDown(e)}
                 onMouseMove={() => this.handleMouseMove()}
-            ></div>
+            ></td>
         );
     }
 }

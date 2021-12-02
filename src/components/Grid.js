@@ -5,27 +5,34 @@ import "./Board.css";
 
 class Grid extends React.Component {
     render() {
-        const { rows, cols, cellWidth, cellHeight } = this.props;
+        const { rows, cols, cellSize } = this.props;
 
-        let board = [];
+        let tableRows = [];
         for (let rowIdx = 0; rowIdx < rows; rowIdx++) {
+            let rowCells = [];
             for (let colIdx = 0; colIdx < cols; colIdx++) {
-                board.push(
+                rowCells.push(
                     <Cell
                         key={rowIdx * cols + colIdx}
                         row={rowIdx}
                         col={colIdx}
-                        width={cellWidth}
-                        height={cellHeight}
+                        width={cellSize}
+                        height={cellSize}
                     />
                 );
             }
+            let trElem = (
+                <tr key={rowIdx}>{rowCells}</tr>
+            );
+            tableRows.push(trElem);
         }
 
         return (
-            <div className="grid bordered">
-                {board}
-            </div>
+            <table id="board-table">
+                <tbody>
+                    {tableRows}
+                </tbody>
+            </table>
         );
     }
 }
