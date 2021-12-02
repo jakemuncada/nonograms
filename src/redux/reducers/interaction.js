@@ -1,3 +1,4 @@
+import { SYMBOL_ID_FILL } from "../../constants";
 import { START_DRAW, END_DRAW, MOVE_DRAW } from "../actionTypes";
 
 const initialState = {
@@ -6,14 +7,15 @@ const initialState = {
     drawStartCol: 0,
     drawEndRow: 0,
     drawEndCol: 0,
+    currSymbolId: SYMBOL_ID_FILL
 };
 
 export default function (state = initialState, action) {
-    let row, col;
+    let row, col, symbolId;
 
     switch (action.type) {
         case START_DRAW:
-            ({ row, col } = action.payload);
+            ({ row, col, symbolId } = action.payload);
             return {
                 ...state,
                 isDrawing: true,
@@ -21,7 +23,9 @@ export default function (state = initialState, action) {
                 drawStartCol: col,
                 drawEndRow: row,
                 drawEndCol: col,
+                drawSymbolId: symbolId
             };
+
         case END_DRAW:
             return {
                 ...state,
@@ -31,13 +35,15 @@ export default function (state = initialState, action) {
                 drawEndRow: 0,
                 drawEndCol: 0,
             };
+
         case MOVE_DRAW:
             ({ row, col } = action.payload);
             return {
                 ...state,
                 drawEndRow: row,
-                drawEndCol: col,
+                drawEndCol: col
             };
+
         default:
             return state;
     }

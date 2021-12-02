@@ -1,12 +1,11 @@
-import { ADJUST_BOARD_SIZE, ADJUST_CELL_SIZE } from "../actionTypes";
-import { calcMinBoardWidth, calcMinBoardHeight, calcCellSize } from "../../utils";
+import { boardClone } from "../../utils";
+import { SET_PUZZLE_DATA, RESET_PUZZLE_DATA, ADJUST_CELL_SIZE } from "../actionTypes";
 
 const initialState = {
     rows: 30,
     cols: 30,
     cellSize: 23,
-    topCluesRows: 0,
-    topCluesArr: []
+    data: []
 };
 
 export default function (state = initialState, action) {
@@ -18,28 +17,28 @@ export default function (state = initialState, action) {
                 cellSize: state.cellSize + amount
             }
 
-        case ADJUST_BOARD_SIZE:
-            const { width, height } = action.payload;
-            let newBoardWidth = state.boardWidth + width;
-            let newBoardHeight = state.boardHeight + height;
-
-            newBoardWidth = Math.floor(newBoardWidth);
-            newBoardHeight = Math.floor(newBoardHeight);
-
-            const minBoardWidth = calcMinBoardWidth(state.cols);
-            const minBoardHeight = calcMinBoardHeight(state.rows);
-
-            newBoardWidth = Math.max(newBoardWidth, minBoardWidth);
-            newBoardHeight = Math.max(newBoardHeight, minBoardHeight);
-
-            const newCellSize = calcCellSize(state.rows, newBoardHeight, state.cols, newBoardWidth);
+        case RESET_PUZZLE_DATA:
+            const { rows, cols } = action.payload;
+            
+            let newData = [];
+            for (let row = 0; row < rows; row++) {
+                newData.push([]);
+                for (let col = 0; col < cols; col++) {
+                    let value = null;
+                    newData[row].push(value);
+                }
+            }
 
             return {
                 ...state,
-                boardWidth: newBoardWidth,
-                boardHeight: newBoardHeight,
-                cellSize: newCellSize
-            };
+                data: newData
+            }
+
+        case SET_PUZZLE_DATA:
+            return {
+                ...state,
+                data: boardClone(action.payload.data)
+            }
 
         default:
             return state;

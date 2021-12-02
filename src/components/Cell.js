@@ -1,102 +1,54 @@
 import React from "react";
 import { connect } from "react-redux";
+import { SYMBOL_ID_FILL } from "../constants";
 import { startDraw, endDraw, moveDraw } from "../redux/actions/interaction";
-import { MOUSE_LEFT_BTN } from "../constants";
 
-const isHighlight = (isDrawing, sRow, sCol, eRow, eCol, row, col) => {
-    if (isDrawing === false) {
-        return false;
-    }
-    if (row === sRow && col === sCol) {
-        return true;
-    }
 
-    const horiDelta = eCol - sCol;
-    const vertDelta = eRow - sRow;
-    const isVerticalDraw = Math.abs(vertDelta) > Math.abs(horiDelta);
+// const mapStateToProps = (state, ownProps) => {
+//     const { drawStartRow, drawStartCol, drawEndRow, drawEndCol,
+//         isDrawing } = state.interaction;
 
-    // Horizontal Draw
-    if (row === sRow && isVerticalDraw === false) {
-        if (col >= sCol && col <= eCol) {
-            return true;
-        }
-        if (col <= sCol && col >= eCol) {
-            return true;
-        }
-    }
+//     const ownRow = ownProps.row;
+//     const ownCol = ownProps.col;
 
-    // Vertical Draw
-    if (col === sCol && isVerticalDraw === true) {
-        if (row >= sRow && row <= eRow) {
-            return true;
-        }
-        if (row <= sRow && row >= eRow) {
-            return true;
-        }
-    }
+//     return {
+//         cols: state.board.cols,
+//         isDrawing: isDrawing,
+//         currSymbolId: state.interaction.currSymbolId,
+//         isHighlight: isHighlight(isDrawing, drawStartRow, drawStartCol,
+//             drawEndRow, drawEndCol, ownRow, ownCol),
+//     };
+// };
 
-    return false;
-};
-
-const mapStateToProps = (state, ownProps) => {
-    const { drawStartRow, drawStartCol, drawEndRow, drawEndCol, isDrawing } = state.interaction;
-    const ownRow = ownProps.row;
-    const ownCol = ownProps.col;
-
-    return {
-        cols: state.board.cols,
-        isDrawing: isDrawing,
-        isHighlight: isHighlight(isDrawing, drawStartRow, drawStartCol,
-            drawEndRow, drawEndCol, ownRow, ownCol),
-    };
-};
-
-const mapDispatchToProps = (dispatch, ownProps) => {
-    return {
-        startDraw: (row, col) => dispatch(startDraw(row, col)),
-        endDraw: () => dispatch(endDraw()),
-        moveDraw: (row, col, isDrawing) => {
-            if (isDrawing) {
-                if (row !== ownProps.drawEndRow || col !== ownProps.drawEndCol) {
-                    dispatch(moveDraw(row, col));
-                }
-            }
-        },
-    };
-};
+// const mapDispatchToProps = (dispatch, ownProps) => {
+//     return {
+//         startDraw: (row, col, symbolId) => dispatch(startDraw(row, col, symbolId)),
+//         endDraw: () => dispatch(endDraw()),
+//         moveDraw: (row, col, isDrawing) => {
+//             if (isDrawing) {
+//                 if (row !== ownProps.drawEndRow || col !== ownProps.drawEndCol) {
+//                     dispatch(moveDraw(row, col));
+//                 }
+//             }
+//         },
+//     };
+// };
 
 class Cell extends React.Component {
-    
+
     shouldComponentUpdate(nextProps) {
-        const { width, height, isHighlight } = this.props;
-        return isHighlight !== nextProps.isHighlight || width !== nextProps.width || height !== nextProps.height;
-    }
-
-    handleMouseDown = (e) => {
-        if (e.button === MOUSE_LEFT_BTN) {
-            const { row, col } = this.props;
-            this.props.startDraw(row, col);
-            document.addEventListener("mouseup", this.handleMouseUp);
-        }
-    }
-
-    handleMouseUp = () => {
-        this.props.endDraw();
-        document.removeEventListener("mouseup", this.handleMouseUp);
-    }
-
-    handleMouseMove = () => {
-        const { row, col, isDrawing, moveDraw } = this.props;
-        moveDraw(row, col, isDrawing);
+        const { width, height, symbolId } = this.props;
+        return symbolId !== nextProps.symbolId || width !== nextProps.width || height !== nextProps.height;
     }
 
     render() {
-        const { cols, row, col, width, height, isHighlight } = this.props;
+        const { cols, row, col, width, height,
+            symbolId, handleMouseDown, handleMouseEnter } = this.props;
 
         const style = {
             width: width,
             height: height,
-            backgroundColor: (isHighlight) ? "gold" : "#f0f0f0",
+            backgroundColor: (symbolId == SYMBOL_ID_FILL) ? "black" : "#f0f0f0",
         };
 
         return (
@@ -104,11 +56,11 @@ class Cell extends React.Component {
                 key={row * cols + col}
                 style={style}
                 className="cell nodrag bordered"
-                onMouseDown={(e) => this.handleMouseDown(e)}
-                onMouseMove={() => this.handleMouseMove()}
+                onMouseDown={(e) => handleMouseDown(e, row, col)}
+                onMouseEnter={() => handleMouseEnter(row, col)}
             ></td>
         );
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Cell);
+export default Cell;

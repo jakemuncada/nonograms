@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import "./App.css";
 import Board from "./components/Board";
 import input from "./input";
+import { resetPuzzleData } from "./redux/actions/board";
 import { setLeftClues, setTopClues } from "./redux/actions/clues";
 
 const mapDispatchToProps = (dispatch) => {
@@ -13,7 +14,8 @@ const mapDispatchToProps = (dispatch) => {
             const topClues = puzzleData.top;
             const leftClues = puzzleData.left;
             dispatch(setTopClues(rows, cols, topClues));
-            dispatch(setLeftClues(rows, cols, leftClues))
+            dispatch(setLeftClues(rows, cols, leftClues));
+            dispatch(resetPuzzleData(rows, cols));
         }
     }
 }

@@ -1,10 +1,17 @@
-import { ADJUST_BOARD_SIZE, ADJUST_CELL_SIZE } from "../actionTypes";
+import { SET_PUZZLE_DATA, RESET_PUZZLE_DATA, ADJUST_CELL_SIZE } from "../actionTypes";
 
-export const adjustBoardSize = (widthAdj, heightAdj) => ({
-    type: ADJUST_BOARD_SIZE,
+export const resetPuzzleData = (rows, cols) => ({
+    type: RESET_PUZZLE_DATA,
     payload: {
-        width: widthAdj,
-        height: heightAdj,
+        rows: rows,
+        cols: cols
+    },
+});
+
+export const setPuzzleData = (data) => ({
+    type: SET_PUZZLE_DATA,
+    payload: {
+        data: data
     },
 });
 

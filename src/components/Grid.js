@@ -1,11 +1,94 @@
 import React from "react";
+import { connect } from "react-redux";
+
 import Cell from "./Cell";
+import { startDraw, endDraw, moveDraw } from "../redux/actions/interaction";
+import { boardClone, isCellHighlighted } from "../utils";
+import { setPuzzleData } from "../redux/actions/board";
+import { MOUSE_LEFT_BTN, SYMBOL_ID_FILL } from "../constants";
 
 import "./Board.css";
 
+
+const mapStateToProps = (state) => {
+    return {
+        rows: state.board.rows,
+        cols: state.board.cols,
+        cellSize: state.board.cellSize,
+        currSymbolId: state.interaction.currSymbolId,
+        boardData: state.board.data
+    };
+};
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        setBoardData: (boardData) => dispatch(setPuzzleData(boardData)),
+        startDraw: (row, col, symbolId) => dispatch(startDraw(row, col, symbolId)),
+        endDraw: () => dispatch(endDraw()),
+        moveDraw: (row, col) => dispatch(moveDraw(row, col)),
+    };
+};
+
+
 class Grid extends React.Component {
+
+    state = {
+        isDrawing: false,
+        drawStartRow: null,
+        drawStartCol: null,
+        origBoard: null
+    }
+
+    handleMouseDownOnCell = (e, row, col) => {
+        if (e.button === MOUSE_LEFT_BTN) {
+            
+
+            this.setState({
+                isDrawing: true,
+                drawStartRow: row,
+                drawStartCol: col,
+                origBoard: boardClone(this.props.boardData)
+            });
+
+            let drawingBoard = boardClone(this.props.boardData);
+            drawingBoard[row][col] = SYMBOL_ID_FILL;
+            this.props.setBoardData(drawingBoard);
+        }
+
+        document.addEventListener("mouseup", this.handleMouseUp);
+    }
+
+    handleMouseEnterOnCell = (cellRow, cellCol) => {
+        const { rows, cols } = this.props;
+        const { drawStartRow, drawStartCol } = this.state;
+
+        if (this.state.isDrawing) {
+            let drawingBoard = boardClone(this.state.origBoard);
+            for (var row = 0; row < rows; row++) {
+                for (var col = 0; col < cols; col++) {
+                    if (isCellHighlighted(drawStartRow, drawStartCol, cellRow, cellCol, row, col)) {
+                        drawingBoard[row][col] = SYMBOL_ID_FILL;
+                    }
+                }
+            }
+
+            this.props.setBoardData(drawingBoard);
+        }
+    }
+
+    handleMouseUp = () => {
+        this.setState({
+            isDrawing: false,
+            drawStartRow: null,
+            drawStartCol: null,
+            origBoard: null
+        });
+        
+        document.removeEventListener("mouseup", this.handleMouseUp);
+    }
+
     render() {
-        const { rows, cols, cellSize } = this.props;
+        const { rows, cols, cellSize, boardData } = this.props;
 
         let tableRows = [];
         for (let rowIdx = 0; rowIdx < rows; rowIdx++) {
@@ -18,6 +101,9 @@ class Grid extends React.Component {
                         col={colIdx}
                         width={cellSize}
                         height={cellSize}
+                        symbolId={boardData[rowIdx][colIdx]}
+                        handleMouseDown={(e, row, col) => this.handleMouseDownOnCell(e, row, col)}
+                        handleMouseEnter={(row, col) => this.handleMouseEnterOnCell(row, col)}
                     />
                 );
             }
@@ -37,4 +123,4 @@ class Grid extends React.Component {
     }
 }
 
-export default Grid;
+export default connect(mapStateToProps, mapDispatchToProps)(Grid);

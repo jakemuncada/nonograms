@@ -125,7 +125,7 @@ class Board extends React.Component {
                     onMouseMove={(e) => this.handleMouseMove(e)}
                     onMouseLeave={() => this.enableScroll()}
                     onWheel={(e) => this.handleMouseWheel(e)}>
-                        
+
                     <div id="board" style={style}>
 
                         <div id="top-container">
@@ -133,8 +133,7 @@ class Board extends React.Component {
                                 data={topClueData} cellSize={cellSize} />
                         </div>
                         <div id="grid-container">
-                            <Grid
-                                rows={rows} cols={cols} cellSize={cellSize} />
+                            <Grid />
                         </div>
                         <div id="left-container">
                             <LeftPanel rows={leftClueRows} cols={leftClueCols} 
