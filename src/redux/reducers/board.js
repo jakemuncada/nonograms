@@ -5,7 +5,7 @@ import { SET_PUZZLE_DATA, RESET_PUZZLE_DATA, ADJUST_CELL_SIZE } from "../actionT
 const initialState = {
     rows: 30,
     cols: 30,
-    cellSize: 23,
+    cellSize: 20,
     data: []
 };
 

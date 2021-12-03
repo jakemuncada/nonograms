@@ -1,5 +1,4 @@
 import React from "react";
-import { getCellHeight } from "../utils";
 
 class LeftPanel extends React.Component {
     getMaxNumOfCols(data) {
@@ -31,7 +30,7 @@ class LeftPanel extends React.Component {
     }
 
     render() {
-        let { rows, cols, data, cellSize } = this.props;
+        const { rows, cols, data, cellSize } = this.props;
 
         if (data === null || data.length <= 0) {
             return null;
@@ -52,8 +51,8 @@ class LeftPanel extends React.Component {
             for (let col = 0; col < cols; col++) {
 
                 let tdStyle = {
-                    width: getWidth(cols, col, cellSize),
-                    height: getCellHeight(row, cellSize),
+                    width: cellSize,
+                    height: cellSize,
                     borderColor: "black",
                     borderStyle: "solid",
                     borderWidth: getBorderWidth(rows, cols, row, col)
@@ -73,10 +72,6 @@ class LeftPanel extends React.Component {
         return <table id="left-table"><tbody>{tableRows}</tbody></table>;
     }
 }
-
-const getWidth = (cols, col, cellSize) => (
-    (col === cols - 1) ? cellSize - 1 : cellSize
-);
 
 const getBorderWidth = (rows, cols, row, col) => {
     let topBdr = 1;

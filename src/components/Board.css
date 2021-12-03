@@ -26,7 +26,6 @@
 #left-container {
     grid-row: 2;
     grid-column: 1;
-    box-sizing: border-box;
     background-color: #e7bc91;
 }
 
@@ -54,7 +53,6 @@ table {
 
 .cell {
     padding: 0;
-    box-sizing: border-box;
     cursor: pointer;
 
     user-select: none;

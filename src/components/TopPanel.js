@@ -1,10 +1,9 @@
 import React from "react";
-import { getCellWidth } from "../utils";
 
 class TopPanel extends React.Component {
 
     render() {
-        let { rows, cols, data, cellSize } = this.props;
+        const { rows, cols, data, cellSize } = this.props;
 
         if (data === null || data.length <= 0) {
             return null;
@@ -24,8 +23,8 @@ class TopPanel extends React.Component {
             for (let col = 0; col < cols; col++) {
 
                 let tdStyle = {
-                    width: getCellWidth(cols, col, cellSize),
-                    height: getHeight(row, cellSize),
+                    width: cellSize,
+                    height: cellSize,
                     borderColor: "black",
                     borderStyle: "solid",
                     borderWidth: getBorderWidth(rows, cols, row, col)
@@ -44,14 +43,6 @@ class TopPanel extends React.Component {
 
         return <table id="top-table"><tbody>{tableRows}</tbody></table>;
     }
-}
-
-const getHeight = (row, cellSize) => {
-    if (row === 0) {
-        return cellSize + 1;
-    }
-
-    return cellSize;
 }
 
 const getBorderWidth = (rows, cols, row, col) => {

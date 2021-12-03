@@ -1,6 +1,5 @@
 import React from "react";
 import { SYMBOL_ID_EMPTY, SYMBOL_ID_FILL, SYMBOL_ID_X } from "../constants";
-import { getCellHeight, getCellWidth } from "../utils";
 import SymbolSquare from "./symbols/SymbolSquare";
 import SymbolX from "./symbols/SymbolX";
 
@@ -19,14 +18,14 @@ class Cell extends React.Component {
             handleMouseDown, handleMouseEnter } = this.props;
 
         const tdStyle = {
-            width: getCellWidth(cols, col, cellSize),
-            height: getCellHeight(row, cellSize),
+            width: cellSize,
+            height: cellSize,
             borderColor: "black",
             borderStyle: "solid",
             borderWidth: getBorderWidth(rows, cols, row, col)
         };
 
-        const contentSize = cellSize - 5;
+        const contentSize = cellSize - 4;
         const contentStyle = {
             left: 2,
             width: contentSize,

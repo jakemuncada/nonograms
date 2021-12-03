@@ -17,26 +17,6 @@ export const calcCellSize = (rows, boardHeight, cols, boardWidth) => {
     return Math.floor(cellSize);
 }
 
-export const getCellWidth = (cols, col, cellSize) => {
-    if (col === cols - 1) {
-        return cellSize + 1;
-    }
-
-    if (col % 5 === 0) {
-        return cellSize + 1;
-    }
-
-    return cellSize;
-}
-
-export const getCellHeight = (row, cellSize) => {
-    if ((row + 1) % 5 === 0) {
-        return cellSize + 1;
-    }
-
-    return cellSize;
-}
-
 export const calcMinBoardWidth = (cols) => {
     return CELL_WIDTH_MIN * cols;
 }
