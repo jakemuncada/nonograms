@@ -4,7 +4,7 @@ import Grid from "./Grid";
 import TopPanel from "./TopPanel";
 import LeftPanel from "./LeftPanel";
 import { adjustCellSize } from "../redux/actions/board";
-import { MOUSE_MID_BTN } from "../constants";
+import { CELL_WIDTH_MIN, MOUSE_MID_BTN } from "../constants";
 
 const mapStateToProps = (state) => {
     return {
@@ -80,7 +80,9 @@ class Board extends React.Component {
 
     handleMouseWheel = (e) => {
         if (e.deltaY > 0) {
-            this.props.zoomOut(2);
+            if (this.props.cellSize > CELL_WIDTH_MIN) {
+                this.props.zoomOut(2);
+            }
         }
         else if (e.deltaY < 0) {
             this.props.zoomIn(2);

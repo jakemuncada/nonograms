@@ -103,3 +103,23 @@ export const isCellHighlighted = (sRow, sCol, eRow, eCol, row, col) => {
 
     return false;
 };
+
+export const getClueFontSize = (cellSize) => {
+    let fontSize;
+    if (cellSize > 28) {
+        fontSize = 13;
+    }
+    else if (cellSize > 24) {
+        fontSize = 12;
+    }
+    else if (cellSize > 22) {
+        fontSize = 11;
+    }
+    else if (cellSize > 20) {
+        fontSize = 10;
+    }
+    else {
+        fontSize = 9;
+    }
+    return fontSize;
+}

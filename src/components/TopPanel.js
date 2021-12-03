@@ -1,4 +1,5 @@
 import React from "react";
+import { getClueFontSize } from "../utils";
 
 class TopPanel extends React.Component {
 
@@ -25,6 +26,7 @@ class TopPanel extends React.Component {
                 let tdStyle = {
                     width: cellSize,
                     height: cellSize,
+                    fontSize: `${getClueFontSize(cellSize)}pt`,
                     borderColor: "black",
                     borderStyle: "solid",
                     borderWidth: getBorderWidth(rows, cols, row, col)
