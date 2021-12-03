@@ -1,6 +1,8 @@
 import React from "react";
-import { SYMBOL_ID_EMPTY, SYMBOL_ID_FILL } from "../constants";
+import { SYMBOL_ID_EMPTY, SYMBOL_ID_FILL, SYMBOL_ID_X } from "../constants";
 import { getCellHeight, getCellWidth } from "../utils";
+import SymbolSquare from "./symbols/SymbolSquare";
+import SymbolX from "./symbols/SymbolX";
 
 class Cell extends React.Component {
 
@@ -24,12 +26,14 @@ class Cell extends React.Component {
             borderWidth: getBorderWidth(rows, cols, row, col)
         };
 
+        const contentSize = cellSize - 5;
         const contentStyle = {
             left: 2,
-            width: cellSize - 5,
-            height: cellSize - 5,
-            backgroundColor: getContentBgColor(symbolId, isHighlighted, drawingSymbolId),
+            width: contentSize,
+            height: contentSize
         }
+
+        const symbol = getSymbol(symbolId, isHighlighted, drawingSymbolId, contentSize);
 
         return (
             <td
@@ -39,45 +43,58 @@ class Cell extends React.Component {
                 onMouseDown={(e) => handleMouseDown(e, row, col)}
                 onMouseEnter={() => handleMouseEnter(row, col)}
             >
-                <div className="cell-content" style={contentStyle}></div>
+                <div className="cell-content" style={contentStyle}>
+                    {symbol}
+                </div>
             </td>
         );
     }
 }
 
-const getContentBgColor = (ownSymbolId, isHighlighted, drawingSymbolId) => {
+const getSymbol = (ownSymbolId, isHighlighted, drawingSymbolId, contentSize) => {
     // If the cell is not highlighted.
     if (!isHighlighted) {
-        return getSymbolBgColor(ownSymbolId, false);
+        return _getSymbol(ownSymbolId, false, contentSize);
     }
 
     // If the cell is currently EMPTY.
     if (ownSymbolId === SYMBOL_ID_EMPTY) {
-        return getSymbolBgColor(drawingSymbolId, isHighlighted);
+        return _getSymbol(drawingSymbolId, isHighlighted, contentSize);
     }
 
     // If the cell has a symbol but is in the process of being erased.
     if (ownSymbolId !== SYMBOL_ID_EMPTY && drawingSymbolId === SYMBOL_ID_EMPTY) {
-        return getSymbolBgColor(ownSymbolId, isHighlighted);
+        return _getSymbol(ownSymbolId, isHighlighted, contentSize);
     }
 
     // Else, if the cell has a symbol and is in the process of changing symbols.
-    return getSymbolBgColor(drawingSymbolId, isHighlighted);
+    return _getSymbol(drawingSymbolId, isHighlighted, contentSize);
 }
 
-const getSymbolBgColor = (symbolId, isHighlighted) => {
+const _getSymbol = (symbolId, isHighlighted, contentSize) => {
     if (!isHighlighted) {
         switch (symbolId) {
-            case SYMBOL_ID_EMPTY: return "transparent";
-            case SYMBOL_ID_FILL: return "black";
-            default: return "red";  // Invalid case
+            case SYMBOL_ID_EMPTY:
+                return null;
+            case SYMBOL_ID_FILL:
+                return <SymbolSquare size={contentSize} color="black" />
+            case SYMBOL_ID_X:
+                return <SymbolX size={contentSize} color="black" />
+            default: 
+                return null;  // Invalid case
         }
     }
     else {
+        const color="#454545"
         switch (symbolId) {
-            case SYMBOL_ID_EMPTY: return "transparent";
-            case SYMBOL_ID_FILL: return "#4e4e4e";
-            default: return "red";  // Invalid case
+            case SYMBOL_ID_EMPTY:
+                return null;
+            case SYMBOL_ID_FILL:
+                return <SymbolSquare size={contentSize} color={color} />
+                case SYMBOL_ID_X:
+                    return <SymbolX size={contentSize} color={color} />
+            default: 
+                return null;  // Invalid case
         }
     }
 }

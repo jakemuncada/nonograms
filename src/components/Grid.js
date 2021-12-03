@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import Cell from "./Cell";
 import { boardClone, getCellId, getCellRowCol, getHighlightedCells } from "../utils";
 import { setPuzzleData } from "../redux/actions/board";
-import { MOUSE_LEFT_BTN, SYMBOL_ID_EMPTY, SYMBOL_ID_FILL } from "../constants";
+import { MOUSE_LEFT_BTN, MOUSE_RIGHT_BTN, SYMBOL_ID_EMPTY, SYMBOL_ID_FILL, SYMBOL_ID_X } from "../constants";
 
 import "./Board.css";
 
@@ -38,11 +38,10 @@ class Grid extends React.Component {
     }
 
     handleMouseDownOnCell = (e, row, col) => {
+        const { cols, boardData } = this.props;
+        let currDrawSymbolId = null;
+
         if (e.button === MOUSE_LEFT_BTN) {
-            let currDrawSymbolId;
-
-            const { cols, boardData } = this.props;
-
             if (boardData[row][col] === SYMBOL_ID_FILL) {
                 // If the clicked cell is FILLED, the drawing mode will be ERASE/EMPTY.
                 currDrawSymbolId = SYMBOL_ID_EMPTY;                
@@ -51,7 +50,19 @@ class Grid extends React.Component {
                 // Else, start drawing with FILL mode.
                 currDrawSymbolId = SYMBOL_ID_FILL;
             }
+        }
+        else if (e.button === MOUSE_RIGHT_BTN) {
+            if (boardData[row][col] === SYMBOL_ID_X) {
+                // If the clicked cell is X, the drawing mode will be ERASE/EMPTY.
+                currDrawSymbolId = SYMBOL_ID_EMPTY;                
+            }
+            else {
+                // Else, start drawing with the X symbol.
+                currDrawSymbolId = SYMBOL_ID_X;
+            } 
+        }
 
+        if (currDrawSymbolId !== null) {
             const ownCellId = getCellId(cols, row, col);
             let highlightedCells = new Set();
             highlightedCells.add(ownCellId);

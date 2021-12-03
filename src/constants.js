@@ -6,3 +6,4 @@ export const MOUSE_RIGHT_BTN = 2;
 
 export const SYMBOL_ID_EMPTY = 0;
 export const SYMBOL_ID_FILL = 1;
+export const SYMBOL_ID_X = 2;

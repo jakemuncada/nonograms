@@ -75,6 +75,10 @@ table {
     padding: 0;
 }
 
+svg {
+    float: left;
+}
+
 .clue-cell {
     font-size: 10px;
     color: black;
