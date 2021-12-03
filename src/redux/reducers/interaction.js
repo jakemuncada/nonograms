@@ -7,7 +7,8 @@ const initialState = {
     drawStartCol: 0,
     drawEndRow: 0,
     drawEndCol: 0,
-    currSymbolId: SYMBOL_ID_FILL
+    currSymbolId: SYMBOL_ID_FILL,
+    origBoardData: null
 };
 
 export default function (state = initialState, action) {

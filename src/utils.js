@@ -16,7 +16,7 @@ export const calcMinBoardHeight = (rows) => {
 }
 
 export const boardClone = (boardData) => {
-    if (boardData.length == 0)
+    if (boardData.length === 0)
         return [];
 
     let clone = [];

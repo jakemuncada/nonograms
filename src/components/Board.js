@@ -109,7 +109,7 @@ class Board extends React.Component {
         const { currOffsetX, currOffsetY } = this.state;
 
         const { 
-            rows, cols, cellSize,
+            cellSize,
             topClueRows, topClueCols,
             leftClueRows, leftClueCols,
             topClueData, leftClueData
