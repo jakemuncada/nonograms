@@ -15,7 +15,6 @@ const mapStateToProps = (state) => {
         rows: state.board.rows,
         cols: state.board.cols,
         cellSize: state.board.cellSize,
-        currSymbolId: state.interaction.currSymbolId,
         boardData: state.board.data
     };
 };

@@ -15,9 +15,11 @@ class Cell extends React.Component {
     }
 
     render() {
-        const { rows, cols, row, col, cellSize, symbolId,
+        const {
+            rows, cols, row, col,cellSize, symbolId,
             isHighlighted, isCrosshair, drawingSymbolId,
-            handleMouseDown, handleMouseEnter } = this.props;
+            handleMouseDown, handleMouseEnter
+        } = this.props;
 
         const tdStyle = {
             width: cellSize,
@@ -42,6 +44,8 @@ class Cell extends React.Component {
 
         const symbol = getSymbol(symbolId, isHighlighted, drawingSymbolId, contentSize);
 
+        const coordDisplay = getCoordDisplay(rows, cols, row, col);
+
         return (
             <td
                 key={row * cols + col}
@@ -54,6 +58,7 @@ class Cell extends React.Component {
                     {symbol}
                 </div>
                 <div className="cell-overlay" style={overlayStyle} />
+                {coordDisplay}
             </td>
         );
     }
@@ -137,6 +142,26 @@ const getBorderWidth = (rows, cols, row, col) => {
     }
 
     return `${topBdr}px ${rightBdr}px ${botBdr}px ${leftBdr}px`;
+}
+
+const getCoordDisplay = (rows, cols, row, col) => {
+    // Only the right-most and bottom-most cells can have a coord display.
+    if (row !== rows - 1 && col !== cols - 1) {
+        return null;
+    }
+
+    // The bottom-right corner cell does not have a coord display.
+    if (row === rows - 1 && col === cols - 1) {
+        return null;
+    }
+
+    if (row === rows - 1 && ((col + 1) % 5 === 0)) {
+        return <div className="coord-disp">{col + 1}</div>
+    }
+
+    if (col === cols - 1 && ((row + 1) % 5 === 0)) {
+        return <div className="coord-disp">{row + 1}</div>
+    }
 }
 
 export default Cell;

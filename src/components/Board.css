@@ -82,6 +82,16 @@ table {
     padding: 0;
 }
 
+.coord-disp {
+    color: #5e5e5e;
+    font-size: 9px;
+    position: absolute;
+    right: 2px;
+    bottom: 2px;
+    margin: 0;
+    padding: 0;
+}
+
 svg {
     float: left;
 }
