@@ -5,7 +5,7 @@ import Cell from "./Cell";
 import { startDraw, endDraw, moveDraw } from "../redux/actions/interaction";
 import { boardClone, isCellHighlighted } from "../utils";
 import { setPuzzleData } from "../redux/actions/board";
-import { MOUSE_LEFT_BTN, SYMBOL_ID_FILL } from "../constants";
+import { MOUSE_LEFT_BTN, SYMBOL_ID_EMPTY, SYMBOL_ID_FILL } from "../constants";
 
 import "./Board.css";
 
@@ -36,22 +36,32 @@ class Grid extends React.Component {
         isDrawing: false,
         drawStartRow: null,
         drawStartCol: null,
-        origBoard: null
+        origBoard: null,
+        currDrawSymbolId: null
     }
 
     handleMouseDownOnCell = (e, row, col) => {
         if (e.button === MOUSE_LEFT_BTN) {
-            
+            let currDrawSymbolId;
+
+            // If the clicked cell is FILLED, the drawing mode will be ERASE/EMPTY.
+            if (this.props.boardData[row][col] === SYMBOL_ID_FILL) {
+                currDrawSymbolId = SYMBOL_ID_EMPTY;                
+            }
+            else {
+                currDrawSymbolId = SYMBOL_ID_FILL;
+            }
 
             this.setState({
                 isDrawing: true,
                 drawStartRow: row,
                 drawStartCol: col,
+                currDrawSymbolId: currDrawSymbolId,
                 origBoard: boardClone(this.props.boardData)
             });
 
             let drawingBoard = boardClone(this.props.boardData);
-            drawingBoard[row][col] = SYMBOL_ID_FILL;
+            drawingBoard[row][col] = currDrawSymbolId;
             this.props.setBoardData(drawingBoard);
         }
 
@@ -60,14 +70,14 @@ class Grid extends React.Component {
 
     handleMouseEnterOnCell = (cellRow, cellCol) => {
         const { rows, cols } = this.props;
-        const { drawStartRow, drawStartCol } = this.state;
+        const { drawStartRow, drawStartCol, currDrawSymbolId } = this.state;
 
         if (this.state.isDrawing) {
             let drawingBoard = boardClone(this.state.origBoard);
             for (var row = 0; row < rows; row++) {
                 for (var col = 0; col < cols; col++) {
                     if (isCellHighlighted(drawStartRow, drawStartCol, cellRow, cellCol, row, col)) {
-                        drawingBoard[row][col] = SYMBOL_ID_FILL;
+                        drawingBoard[row][col] = currDrawSymbolId;
                     }
                 }
             }

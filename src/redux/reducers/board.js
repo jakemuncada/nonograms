@@ -1,3 +1,4 @@
+import { SYMBOL_ID_EMPTY } from "../../constants";
 import { boardClone } from "../../utils";
 import { SET_PUZZLE_DATA, RESET_PUZZLE_DATA, ADJUST_CELL_SIZE } from "../actionTypes";
 
@@ -24,7 +25,7 @@ export default function (state = initialState, action) {
             for (let row = 0; row < rows; row++) {
                 newData.push([]);
                 for (let col = 0; col < cols; col++) {
-                    let value = null;
+                    let value = SYMBOL_ID_EMPTY;
                     newData[row].push(value);
                 }
             }
