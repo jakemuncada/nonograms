@@ -2,8 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 
 import Cell from "./Cell";
-import { startDraw, endDraw, moveDraw } from "../redux/actions/interaction";
-import { boardClone, isCellHighlighted } from "../utils";
+import { boardClone, getCellId, getCellRowCol, getHighlightedCells } from "../utils";
 import { setPuzzleData } from "../redux/actions/board";
 import { MOUSE_LEFT_BTN, SYMBOL_ID_EMPTY, SYMBOL_ID_FILL } from "../constants";
 
@@ -22,10 +21,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        setBoardData: (boardData) => dispatch(setPuzzleData(boardData)),
-        startDraw: (row, col, symbolId) => dispatch(startDraw(row, col, symbolId)),
-        endDraw: () => dispatch(endDraw()),
-        moveDraw: (row, col) => dispatch(moveDraw(row, col)),
+        setBoardData: (boardData) => dispatch(setPuzzleData(boardData))
     };
 };
 
@@ -37,61 +33,75 @@ class Grid extends React.Component {
         drawStartRow: null,
         drawStartCol: null,
         origBoard: null,
-        currDrawSymbolId: null
+        currDrawSymbolId: null,
+        highlightedCells: null
     }
 
     handleMouseDownOnCell = (e, row, col) => {
         if (e.button === MOUSE_LEFT_BTN) {
             let currDrawSymbolId;
 
-            // If the clicked cell is FILLED, the drawing mode will be ERASE/EMPTY.
-            if (this.props.boardData[row][col] === SYMBOL_ID_FILL) {
+            const { cols, boardData } = this.props;
+
+            if (boardData[row][col] === SYMBOL_ID_FILL) {
+                // If the clicked cell is FILLED, the drawing mode will be ERASE/EMPTY.
                 currDrawSymbolId = SYMBOL_ID_EMPTY;                
             }
             else {
+                // Else, start drawing with FILL mode.
                 currDrawSymbolId = SYMBOL_ID_FILL;
             }
+
+            const ownCellId = getCellId(cols, row, col);
+            let highlightedCells = new Set();
+            highlightedCells.add(ownCellId);
 
             this.setState({
                 isDrawing: true,
                 drawStartRow: row,
                 drawStartCol: col,
                 currDrawSymbolId: currDrawSymbolId,
-                origBoard: boardClone(this.props.boardData)
+                origBoard: boardClone(boardData),
+                highlightedCells: highlightedCells
             });
-
-            let drawingBoard = boardClone(this.props.boardData);
-            drawingBoard[row][col] = currDrawSymbolId;
-            this.props.setBoardData(drawingBoard);
         }
 
         document.addEventListener("mouseup", this.handleMouseUp);
     }
 
     handleMouseEnterOnCell = (cellRow, cellCol) => {
-        const { rows, cols } = this.props;
-        const { drawStartRow, drawStartCol, currDrawSymbolId } = this.state;
+        const { cols } = this.props;
+        const { drawStartRow, drawStartCol } = this.state;
 
         if (this.state.isDrawing) {
-            let drawingBoard = boardClone(this.state.origBoard);
-            for (var row = 0; row < rows; row++) {
-                for (var col = 0; col < cols; col++) {
-                    if (isCellHighlighted(drawStartRow, drawStartCol, cellRow, cellCol, row, col)) {
-                        drawingBoard[row][col] = currDrawSymbolId;
-                    }
-                }
-            }
+            let highlightedCells = getHighlightedCells(cols, drawStartRow, drawStartCol,
+                cellRow, cellCol);
 
-            this.props.setBoardData(drawingBoard);
+            this.setState({
+                highlightedCells: highlightedCells
+            });
         }
     }
 
     handleMouseUp = () => {
+
+        let { highlightedCells, origBoard, currDrawSymbolId } = this.state;
+        
+        if (highlightedCells !== null) {
+            highlightedCells.forEach(cellId => {
+                let [row, col] = getCellRowCol(cellId, this.props.cols);
+                origBoard[row][col] = currDrawSymbolId;
+            });
+    
+            this.props.setBoardData(origBoard);
+        }
+
         this.setState({
             isDrawing: false,
             drawStartRow: null,
             drawStartCol: null,
-            origBoard: null
+            origBoard: null,
+            highlightedCells: null
         });
         
         document.removeEventListener("mouseup", this.handleMouseUp);
@@ -99,20 +109,28 @@ class Grid extends React.Component {
 
     render() {
         const { rows, cols, cellSize, boardData } = this.props;
+        const { highlightedCells, currDrawSymbolId } = this.state;
 
         let tableRows = [];
         for (let rowIdx = 0; rowIdx < rows; rowIdx++) {
             let rowCells = [];
             for (let colIdx = 0; colIdx < cols; colIdx++) {
+
+                const cellId = getCellId(cols, rowIdx, colIdx);
+                const isHighlighted = (highlightedCells !== null) ? highlightedCells.has(cellId) : false;
+
                 rowCells.push(
                     <Cell
-                        key={rowIdx * cols + colIdx}
+                        key={cellId}
+                        id={cellId}
                         row={rowIdx}
                         col={colIdx}
                         rows={rows}
                         cols={cols}
                         cellSize={cellSize}
                         symbolId={boardData[rowIdx][colIdx]}
+                        isHighlighted={isHighlighted}
+                        drawingSymbolId={currDrawSymbolId}
                         handleMouseDown={(e, row, col) => this.handleMouseDownOnCell(e, row, col)}
                         handleMouseEnter={(row, col) => this.handleMouseEnterOnCell(row, col)}
                     />

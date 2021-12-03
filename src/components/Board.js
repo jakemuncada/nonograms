@@ -80,10 +80,10 @@ class Board extends React.Component {
 
     handleMouseWheel = (e) => {
         if (e.deltaY > 0) {
-            this.props.zoomOut(1);
+            this.props.zoomOut(2);
         }
         else if (e.deltaY < 0) {
-            this.props.zoomIn(1);
+            this.props.zoomIn(2);
         }
     }
 

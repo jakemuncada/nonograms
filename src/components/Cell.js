@@ -1,18 +1,19 @@
 import React from "react";
-import { SYMBOL_ID_FILL } from "../constants";
+import { SYMBOL_ID_EMPTY, SYMBOL_ID_FILL } from "../constants";
 import { getCellHeight, getCellWidth } from "../utils";
 
 class Cell extends React.Component {
 
     shouldComponentUpdate(nextProps) {
-        const { width, height, symbolId } = this.props;
+        const { cellSize, symbolId, isHighlighted } = this.props;
         return symbolId !== nextProps.symbolId
-            || width !== nextProps.width
-            || height !== nextProps.height;
+            || cellSize !== nextProps.cellSize
+            || isHighlighted !== nextProps.isHighlighted;
     }
 
     render() {
         const { rows, cols, row, col, cellSize, symbolId,
+            isHighlighted, drawingSymbolId,
             handleMouseDown, handleMouseEnter } = this.props;
 
         const tdStyle = {
@@ -27,7 +28,7 @@ class Cell extends React.Component {
             left: 2,
             width: cellSize - 5,
             height: cellSize - 5,
-            backgroundColor: (symbolId === SYMBOL_ID_FILL) ? "black" : "transparent",
+            backgroundColor: getContentBgColor(symbolId, isHighlighted, drawingSymbolId),
         }
 
         return (
@@ -41,6 +42,43 @@ class Cell extends React.Component {
                 <div className="cell-content" style={contentStyle}></div>
             </td>
         );
+    }
+}
+
+const getContentBgColor = (ownSymbolId, isHighlighted, drawingSymbolId) => {
+    // If the cell is not highlighted.
+    if (!isHighlighted) {
+        return getSymbolBgColor(ownSymbolId, false);
+    }
+
+    // If the cell is currently EMPTY.
+    if (ownSymbolId === SYMBOL_ID_EMPTY) {
+        return getSymbolBgColor(drawingSymbolId, isHighlighted);
+    }
+
+    // If the cell has a symbol but is in the process of being erased.
+    if (ownSymbolId !== SYMBOL_ID_EMPTY && drawingSymbolId === SYMBOL_ID_EMPTY) {
+        return getSymbolBgColor(ownSymbolId, isHighlighted);
+    }
+
+    // Else, if the cell has a symbol and is in the process of changing symbols.
+    return getSymbolBgColor(drawingSymbolId, isHighlighted);
+}
+
+const getSymbolBgColor = (symbolId, isHighlighted) => {
+    if (!isHighlighted) {
+        switch (symbolId) {
+            case SYMBOL_ID_EMPTY: return "transparent";
+            case SYMBOL_ID_FILL: return "black";
+            default: return "red";  // Invalid case
+        }
+    }
+    else {
+        switch (symbolId) {
+            case SYMBOL_ID_EMPTY: return "transparent";
+            case SYMBOL_ID_FILL: return "#4e4e4e";
+            default: return "red";  // Invalid case
+        }
     }
 }
 
