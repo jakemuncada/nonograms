@@ -36,7 +36,9 @@ class Board extends React.Component {
         origOffsetX: 0,
         origOffsetY: 0,
         currOffsetX: 0,
-        currOffsetY: 0
+        currOffsetY: 0,
+        crosshairRow: null,
+        crosshairCol: null
     }
 
     handleMouseDown = (e) => {
@@ -78,6 +80,13 @@ class Board extends React.Component {
         document.removeEventListener("mouseup", this.handleMouseUp);
     }
 
+    setCrosshair = (row, col) => {
+        this.setState({
+            crosshairRow: row,
+            crosshairCol: col
+        })
+    }
+
     handleMouseWheel = (e) => {
         if (e.deltaY > 0) {
             if (this.props.cellSize > CELL_WIDTH_MIN) {
@@ -108,13 +117,16 @@ class Board extends React.Component {
     }
 
     render() {
-        const { currOffsetX, currOffsetY } = this.state;
+        const {
+            currOffsetX, currOffsetY,
+            crosshairRow, crosshairCol
+        } = this.state;
 
         const { 
             cellSize,
             topClueRows, topClueCols,
             leftClueRows, leftClueCols,
-            topClueData, leftClueData
+            topClueData, leftClueData,
          } = this.props;
 
         let style = {transform: `translate(${currOffsetX}px, ${currOffsetY}px)`}
@@ -132,14 +144,16 @@ class Board extends React.Component {
 
                         <div id="top-container">
                             <TopPanel rows={topClueRows} cols={topClueCols} 
-                                data={topClueData} cellSize={cellSize} />
+                                data={topClueData} cellSize={cellSize}
+                                crosshairCol={crosshairCol} />
                         </div>
                         <div id="grid-container">
-                            <Grid />
+                            <Grid setCrosshair={this.setCrosshair} />
                         </div>
                         <div id="left-container">
                             <LeftPanel rows={leftClueRows} cols={leftClueCols} 
-                                data={leftClueData} cellSize={cellSize} />
+                                data={leftClueData} cellSize={cellSize}
+                                crosshairRow={crosshairRow} />
                         </div>
                     </div>
                 </div>

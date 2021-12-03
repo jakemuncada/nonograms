@@ -1,10 +1,11 @@
 import React from "react";
+import { COLOR_CELL_BORDER, COLOR_CROSSHAIR_OVERLAY } from "../constants";
 import { getClueFontSize } from "../utils";
 
 class TopPanel extends React.Component {
 
     render() {
-        const { rows, cols, data, cellSize } = this.props;
+        const { rows, cols, data, cellSize, crosshairCol } = this.props;
 
         if (data === null || data.length <= 0) {
             return null;
@@ -26,10 +27,16 @@ class TopPanel extends React.Component {
                 let tdStyle = {
                     width: cellSize,
                     height: cellSize,
-                    fontSize: `${getClueFontSize(cellSize)}pt`,
-                    borderColor: "black",
+                    borderColor: COLOR_CELL_BORDER,
                     borderStyle: "solid",
-                    borderWidth: getBorderWidth(rows, cols, row, col)
+                    borderWidth: getBorderWidth(rows, cols, row, col),
+                    fontSize: `${getClueFontSize(cellSize)}pt`,
+                }
+
+                let overlayStyle = {
+                    width: cellSize,
+                    height: cellSize,
+                    backgroundColor: (col === crosshairCol) ? COLOR_CROSSHAIR_OVERLAY : "transparent"
                 }
 
                 const num = data[row][col] === null ? " " : data[row][col];
@@ -37,6 +44,7 @@ class TopPanel extends React.Component {
                 rowCells.push(
                     <td key={rows * col + row} className="cell clue-cell" style={tdStyle}>
                         <b>{num}</b>
+                        <div className="cell-overlay" style={overlayStyle} />
                     </td>
                 );
             }

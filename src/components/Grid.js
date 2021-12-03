@@ -4,7 +4,8 @@ import { connect } from "react-redux";
 import Cell from "./Cell";
 import { boardClone, getCellId, getCellRowCol, getHighlightedCells } from "../utils";
 import { setPuzzleData } from "../redux/actions/board";
-import { MOUSE_LEFT_BTN, MOUSE_RIGHT_BTN, SYMBOL_ID_EMPTY, SYMBOL_ID_FILL, SYMBOL_ID_X } from "../constants";
+import { MOUSE_LEFT_BTN, MOUSE_RIGHT_BTN, SYMBOL_ID_EMPTY,
+    SYMBOL_ID_FILL, SYMBOL_ID_X } from "../constants";
 
 import "./Board.css";
 
@@ -34,7 +35,9 @@ class Grid extends React.Component {
         drawStartCol: null,
         origBoard: null,
         currDrawSymbolId: null,
-        highlightedCells: null
+        highlightedCells: null,
+        crosshairRow: null,
+        crosshairCol: null
     }
 
     handleMouseDownOnCell = (e, row, col) => {
@@ -89,9 +92,27 @@ class Grid extends React.Component {
                 cellRow, cellCol);
 
             this.setState({
-                highlightedCells: highlightedCells
+                highlightedCells: highlightedCells,
+                crosshairRow: cellRow,
+                crosshairCol: cellCol,
             });
         }
+        else {
+            this.setState({
+                crosshairRow: cellRow,
+                crosshairCol: cellCol,
+            });
+        }
+
+        this.props.setCrosshair(cellRow, cellCol);
+    }
+
+    handleMouseLeaveTable = () => {
+        this.setState({
+            crosshairRow: null,
+            crosshairCol: null,
+        });
+        this.props.setCrosshair(null, null);
     }
 
     handleMouseUp = () => {
@@ -120,7 +141,7 @@ class Grid extends React.Component {
 
     render() {
         const { rows, cols, cellSize, boardData } = this.props;
-        const { highlightedCells, currDrawSymbolId } = this.state;
+        const { highlightedCells, currDrawSymbolId, crosshairRow, crosshairCol } = this.state;
 
         let tableRows = [];
         for (let rowIdx = 0; rowIdx < rows; rowIdx++) {
@@ -129,6 +150,7 @@ class Grid extends React.Component {
 
                 const cellId = getCellId(cols, rowIdx, colIdx);
                 const isHighlighted = (highlightedCells !== null) ? highlightedCells.has(cellId) : false;
+                const isCrosshair = (rowIdx === crosshairRow) || (colIdx === crosshairCol);
 
                 rowCells.push(
                     <Cell
@@ -141,6 +163,7 @@ class Grid extends React.Component {
                         cellSize={cellSize}
                         symbolId={boardData[rowIdx][colIdx]}
                         isHighlighted={isHighlighted}
+                        isCrosshair={isCrosshair}
                         drawingSymbolId={currDrawSymbolId}
                         handleMouseDown={(e, row, col) => this.handleMouseDownOnCell(e, row, col)}
                         handleMouseEnter={(row, col) => this.handleMouseEnterOnCell(row, col)}
@@ -154,7 +177,7 @@ class Grid extends React.Component {
         }
 
         return (
-            <table id="board-table">
+            <table id="board-table" onMouseLeave={() => this.handleMouseLeaveTable()}>
                 <tbody>
                     {tableRows}
                 </tbody>

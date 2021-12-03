@@ -65,10 +65,19 @@ table {
 .grid-cell {
     background-color: #faeee1;
     text-align: center;
+    position: relative;
 }
 
 .cell-content {
     position: relative;
+    margin: 0;
+    padding: 0;
+}
+
+.cell-overlay {
+    position: absolute;
+    left: 0;
+    top: 0;
     margin: 0;
     padding: 0;
 }
@@ -78,6 +87,7 @@ svg {
 }
 
 .clue-cell {
+    position: relative;
     color: black;
     padding: 0;
 }

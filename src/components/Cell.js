@@ -1,26 +1,28 @@
 import React from "react";
-import { SYMBOL_ID_EMPTY, SYMBOL_ID_FILL, SYMBOL_ID_X } from "../constants";
 import SymbolSquare from "./symbols/SymbolSquare";
 import SymbolX from "./symbols/SymbolX";
+import { COLOR_CELL_BORDER, COLOR_CROSSHAIR_OVERLAY, COLOR_SYMBOL_HIGHLIGHT,
+    COLOR_SYMBOL_NORMAL, SYMBOL_ID_EMPTY, SYMBOL_ID_FILL, SYMBOL_ID_X } from "../constants";
 
 class Cell extends React.Component {
 
     shouldComponentUpdate(nextProps) {
-        const { cellSize, symbolId, isHighlighted } = this.props;
+        const { cellSize, symbolId, isHighlighted, isCrosshair } = this.props;
         return symbolId !== nextProps.symbolId
             || cellSize !== nextProps.cellSize
-            || isHighlighted !== nextProps.isHighlighted;
+            || isHighlighted !== nextProps.isHighlighted
+            || isCrosshair !== nextProps.isCrosshair;
     }
 
     render() {
         const { rows, cols, row, col, cellSize, symbolId,
-            isHighlighted, drawingSymbolId,
+            isHighlighted, isCrosshair, drawingSymbolId,
             handleMouseDown, handleMouseEnter } = this.props;
 
         const tdStyle = {
             width: cellSize,
             height: cellSize,
-            borderColor: "black",
+            borderColor: COLOR_CELL_BORDER,
             borderStyle: "solid",
             borderWidth: getBorderWidth(rows, cols, row, col)
         };
@@ -30,6 +32,12 @@ class Cell extends React.Component {
             left: 2,
             width: contentSize,
             height: contentSize
+        }
+
+        const overlayStyle = {
+            width: cellSize,
+            height: cellSize,
+            backgroundColor: isCrosshair ? COLOR_CROSSHAIR_OVERLAY : "transparent"
         }
 
         const symbol = getSymbol(symbolId, isHighlighted, drawingSymbolId, contentSize);
@@ -45,6 +53,7 @@ class Cell extends React.Component {
                 <div className="cell-content" style={contentStyle}>
                     {symbol}
                 </div>
+                <div className="cell-overlay" style={overlayStyle} />
             </td>
         );
     }
@@ -76,22 +85,21 @@ const _getSymbol = (symbolId, isHighlighted, contentSize) => {
             case SYMBOL_ID_EMPTY:
                 return null;
             case SYMBOL_ID_FILL:
-                return <SymbolSquare size={contentSize} color="black" />
+                return <SymbolSquare size={contentSize} color={COLOR_SYMBOL_NORMAL} />
             case SYMBOL_ID_X:
-                return <SymbolX size={contentSize} color="black" />
+                return <SymbolX size={contentSize} color={COLOR_SYMBOL_NORMAL} />
             default: 
                 return null;  // Invalid case
         }
     }
     else {
-        const color="#454545"
         switch (symbolId) {
             case SYMBOL_ID_EMPTY:
                 return null;
             case SYMBOL_ID_FILL:
-                return <SymbolSquare size={contentSize} color={color} />
+                return <SymbolSquare size={contentSize} color={COLOR_SYMBOL_HIGHLIGHT} />
                 case SYMBOL_ID_X:
-                    return <SymbolX size={contentSize} color={color} />
+                    return <SymbolX size={contentSize} color={COLOR_SYMBOL_HIGHLIGHT} />
             default: 
                 return null;  // Invalid case
         }
