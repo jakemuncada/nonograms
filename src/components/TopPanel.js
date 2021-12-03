@@ -1,4 +1,5 @@
 import React from "react";
+import { getCellWidth } from "../utils";
 
 class TopPanel extends React.Component {
 
@@ -21,10 +22,19 @@ class TopPanel extends React.Component {
         for (let row = 0; row < rows; row++) {
             let rowCells = [];
             for (let col = 0; col < cols; col++) {
+
+                let tdStyle = {
+                    width: getCellWidth(cols, col, cellSize),
+                    height: getHeight(row, cellSize),
+                    borderColor: "black",
+                    borderStyle: "solid",
+                    borderWidth: getBorderWidth(rows, cols, row, col)
+                }
+
                 const num = data[row][col] === null ? " " : data[row][col];
+
                 rowCells.push(
-                    <td key={rows * col + row} className="cell bordered clue-cell"
-                        width={cellSize} height={cellSize}>
+                    <td key={rows * col + row} className="cell clue-cell" style={tdStyle}>
                         <b>{num}</b>
                     </td>
                 );
@@ -34,6 +44,43 @@ class TopPanel extends React.Component {
 
         return <table id="top-table"><tbody>{tableRows}</tbody></table>;
     }
+}
+
+const getHeight = (row, cellSize) => {
+    if (row === 0) {
+        return cellSize + 1;
+    }
+
+    return cellSize;
+}
+
+const getBorderWidth = (rows, cols, row, col) => {
+    let topBdr = 1;
+    let rightBdr = 1;
+    let botBdr = 1;
+    let leftBdr = 1;
+
+    if (row === 0) {
+        topBdr = 2;
+    }
+
+    if (col === cols - 1) {
+        rightBdr = 2;
+    }
+
+    if (col === 0) {
+        leftBdr = 2;
+    }
+
+    if ((col + 1) % 5 === 0) {
+        rightBdr = 2;
+    }
+
+    if (row === rows - 1) {
+        botBdr = 0;
+    }
+
+    return `${topBdr}px ${rightBdr}px ${botBdr}px ${leftBdr}px`;
 }
 
 export default TopPanel;

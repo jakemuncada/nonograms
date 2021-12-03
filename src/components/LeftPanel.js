@@ -1,4 +1,5 @@
 import React from "react";
+import { getCellHeight } from "../utils";
 
 class LeftPanel extends React.Component {
     getMaxNumOfCols(data) {
@@ -47,11 +48,21 @@ class LeftPanel extends React.Component {
         let tableRows = [];
         for (let row = 0; row < rows; row++) {
             let rowCells = [];
+
             for (let col = 0; col < cols; col++) {
+
+                let tdStyle = {
+                    width: getWidth(cols, col, cellSize),
+                    height: getCellHeight(row, cellSize),
+                    borderColor: "black",
+                    borderStyle: "solid",
+                    borderWidth: getBorderWidth(rows, cols, row, col)
+                }
+
                 const num = data[row][col] === null ? " " : data[row][col];
+
                 rowCells.push(
-                    <td key={rows * col + row} className="cell bordered clue-cell"
-                        width={cellSize} height={cellSize}>
+                    <td key={rows * col + row} className="cell clue-cell" style={tdStyle}>
                         <b>{num}</b>
                     </td>
                 );
@@ -61,6 +72,39 @@ class LeftPanel extends React.Component {
 
         return <table id="left-table"><tbody>{tableRows}</tbody></table>;
     }
+}
+
+const getWidth = (cols, col, cellSize) => (
+    (col === cols - 1) ? cellSize - 1 : cellSize
+);
+
+const getBorderWidth = (rows, cols, row, col) => {
+    let topBdr = 1;
+    let rightBdr = 1;
+    let botBdr = 1;
+    let leftBdr = 1;
+
+    if (row === 0) {
+        topBdr = 2;
+    }
+
+    if (col === cols - 1) {
+        rightBdr = 0;
+    }
+
+    if (col === 0) {
+        leftBdr = 2;
+    }
+
+    if ((row + 1) % 5 === 0) {
+        botBdr = 2;
+    }
+
+    if (row === rows - 1) {
+        botBdr = 2;
+    }
+
+    return `${topBdr}px ${rightBdr}px ${botBdr}px ${leftBdr}px`;
 }
 
 export default LeftPanel;

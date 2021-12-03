@@ -109,8 +109,9 @@ class Grid extends React.Component {
                         key={rowIdx * cols + colIdx}
                         row={rowIdx}
                         col={colIdx}
-                        width={cellSize}
-                        height={cellSize}
+                        rows={rows}
+                        cols={cols}
+                        cellSize={cellSize}
                         symbolId={boardData[rowIdx][colIdx]}
                         handleMouseDown={(e, row, col) => this.handleMouseDownOnCell(e, row, col)}
                         handleMouseEnter={(row, col) => this.handleMouseEnterOnCell(row, col)}

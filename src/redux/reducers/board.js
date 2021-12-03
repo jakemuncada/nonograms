@@ -32,6 +32,8 @@ export default function (state = initialState, action) {
 
             return {
                 ...state,
+                rows: rows,
+                cols: cols,
                 data: newData
             }
 
