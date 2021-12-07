@@ -1,5 +1,3 @@
-import { CELL_WIDTH_MIN, CELL_HEIGHT_MIN } from "./constants";
-
 export const getCellId = (cols, row, col) => (
     row * cols + col
 );
@@ -17,14 +15,6 @@ export const calcCellSize = (rows, boardHeight, cols, boardWidth) => {
     return Math.floor(cellSize);
 }
 
-export const calcMinBoardWidth = (cols) => {
-    return CELL_WIDTH_MIN * cols;
-}
-
-export const calcMinBoardHeight = (rows) => {
-    return CELL_HEIGHT_MIN * rows;
-}
-
 export const boardClone = (boardData) => {
     if (boardData.length === 0)
         return [];
@@ -36,12 +26,12 @@ export const boardClone = (boardData) => {
     return clone;
 }
 
-export const getHighlightedCells = (cols, sRow, sCol, eRow, eCol) => {
-    let highlightedCells = new Set();
-    highlightedCells.add(getCellId(cols, sRow, sCol));
+export const getDrawCells = (sRow, sCol, eRow, eCol, cols) => {
+    let drawCells = new Set();
+    drawCells.add(getCellId(cols, sRow, sCol));
 
     if (eRow === sRow && eCol === sCol) {
-        return highlightedCells;
+        return drawCells;
     }
 
     const horiDelta = eCol - sCol;
@@ -54,7 +44,7 @@ export const getHighlightedCells = (cols, sRow, sCol, eRow, eCol) => {
         let end = Math.max(sCol, eCol);
         while (col <= end) {
             let cellId = getCellId(cols, sRow, col);
-            highlightedCells.add(cellId);
+            drawCells.add(cellId);
             col += 1;
         }
     }
@@ -64,12 +54,12 @@ export const getHighlightedCells = (cols, sRow, sCol, eRow, eCol) => {
         let end = Math.max(sRow, eRow);
         while (row <= end) {
             let cellId = getCellId(cols, row, sCol);
-            highlightedCells.add(cellId);
+            drawCells.add(cellId);
             row += 1;
         }
     }
     
-    return highlightedCells;
+    return drawCells;
 }
 
 export const isCellHighlighted = (sRow, sCol, eRow, eCol, row, col) => {

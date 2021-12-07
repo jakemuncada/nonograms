@@ -4,21 +4,7 @@ import Grid from "./Grid";
 import TopPanel from "./TopPanel";
 import LeftPanel from "./LeftPanel";
 import { adjustCellSize } from "../redux/actions/board";
-import { CELL_WIDTH_MIN, MOUSE_MID_BTN } from "../constants";
-
-const mapStateToProps = (state) => {
-    return {
-        rows: state.board.rows,
-        cols: state.board.cols,
-        cellSize: state.board.cellSize,
-        topClueRows: state.clues.topClueRows,
-        topClueCols: state.clues.topClueCols,
-        topClueData: state.clues.topClueData,
-        leftClueRows: state.clues.leftClueRows,
-        leftClueCols: state.clues.leftClueCols,
-        leftClueData: state.clues.leftClueData,
-    };
-};
+import { MOUSE_MID_BTN } from "../constants";
 
 const mapDispatchToProps = (dispatch) => {
     return {
@@ -37,8 +23,6 @@ class Board extends React.Component {
         origOffsetY: 0,
         currOffsetX: 0,
         currOffsetY: 0,
-        crosshairRow: null,
-        crosshairCol: null
     }
 
     handleMouseDown = (e) => {
@@ -80,18 +64,9 @@ class Board extends React.Component {
         document.removeEventListener("mouseup", this.handleMouseUp);
     }
 
-    setCrosshair = (row, col) => {
-        this.setState({
-            crosshairRow: row,
-            crosshairCol: col
-        })
-    }
-
     handleMouseWheel = (e) => {
         if (e.deltaY > 0) {
-            if (this.props.cellSize > CELL_WIDTH_MIN) {
-                this.props.zoomOut(2);
-            }
+            this.props.zoomOut(2);
         }
         else if (e.deltaY < 0) {
             this.props.zoomIn(2);
@@ -117,17 +92,7 @@ class Board extends React.Component {
     }
 
     render() {
-        const {
-            currOffsetX, currOffsetY,
-            crosshairRow, crosshairCol
-        } = this.state;
-
-        const { 
-            cellSize,
-            topClueRows, topClueCols,
-            leftClueRows, leftClueCols,
-            topClueData, leftClueData,
-         } = this.props;
+        const { currOffsetX, currOffsetY } = this.state;
 
         let style = {transform: `translate(${currOffsetX}px, ${currOffsetY}px)`}
 
@@ -143,17 +108,13 @@ class Board extends React.Component {
                     <div id="board" style={style}>
 
                         <div id="top-container">
-                            <TopPanel rows={topClueRows} cols={topClueCols} 
-                                data={topClueData} cellSize={cellSize}
-                                crosshairCol={crosshairCol} />
+                            <TopPanel />
                         </div>
                         <div id="grid-container">
-                            <Grid setCrosshair={this.setCrosshair} />
+                            <Grid />
                         </div>
                         <div id="left-container">
-                            <LeftPanel rows={leftClueRows} cols={leftClueCols} 
-                                data={leftClueData} cellSize={cellSize}
-                                crosshairRow={crosshairRow} />
+                            <LeftPanel />
                         </div>
                     </div>
                 </div>
@@ -162,4 +123,4 @@ class Board extends React.Component {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Board);
+export default connect(null, mapDispatchToProps)(Board);

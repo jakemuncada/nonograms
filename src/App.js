@@ -21,7 +21,7 @@ const mapDispatchToProps = (dispatch) => {
 }
 
 function App(props) {
-    let puzzleData = input[0];
+    let puzzleData = input[2];
     props.setPuzzle(puzzleData);
 
     return (
