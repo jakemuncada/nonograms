@@ -175,10 +175,17 @@ class Nonogram {
             this.renderCell(cellId, cellSymbol, false);
         });
 
+        let symbolId;
         this.drawCells.clear();
         if (newDrawCells !== null) {
             newDrawCells.forEach(cellId => {
-                this.renderCell(cellId, this.drawSymbol, true);
+                if (this.drawSymbol === SYMBOL_ID_EMPTY) {
+                    const [row, col] = getCellRowCol(cellId, this.cols);
+                    symbolId = this.board[row][col];
+                } else {
+                    symbolId = this.drawSymbol;
+                }
+                this.renderCell(cellId, symbolId, true);
             });
         }
     }
