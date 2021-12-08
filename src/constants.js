@@ -16,6 +16,9 @@ export const CLASSNAME_CELL_CONTENT = "cell-content";
 export const CLASSNAME_CELL_DRAWING = "cell-drawing";
 export const CLASSNAME_CROSSHAIR_ACTIVE = "crosshair-active";
 export const CLASSNAME_CLUE_SLASH = "clue-slash";
+export const CLASSNAME_VISIBLE = "visible";
+export const CLASSNAME_TRANSITION = "trans";
+
 
 export const SVG_CLASS_EMPTY = "cell-empty";
 export const SVG_CLASS_FILL = "cell-fill";

@@ -67,6 +67,9 @@ class Board extends React.Component {
             this.currOffsetY = newOffsetY;
             this.boardElem.style.transform = `translate(${newOffsetX}px, ${newOffsetY}px)`;
         }
+        else if (nonogram.isDrawing) {
+            nonogram.updateDrawCounter(e.clientX, e.clientY);
+        }
     }
 
     handleMouseUp = (e) => {
@@ -134,6 +137,7 @@ class Board extends React.Component {
                         </div>
                         <div id="grid-container">
                             <Grid rows={rows} cols={cols} cellSize={cellSize} />
+                            <div id="draw-counter" />
                         </div>
                         <div id="left-container">
                             <LeftPanel 

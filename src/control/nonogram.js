@@ -4,6 +4,8 @@ import {
     CLASSNAME_CELL_DRAWING,
     CLASSNAME_CLUE_SLASH,
     CLASSNAME_CROSSHAIR_ACTIVE,
+    CLASSNAME_TRANSITION,
+    CLASSNAME_VISIBLE,
     SVG_URL_CLUE_SLASH,
     SVG_URL_FILL,
     SVG_URL_X,
@@ -21,16 +23,20 @@ class Nonogram {
     topClueData = null;
     leftClueCols = 0;
     leftClueData = null;
-    cellElems = {};
-    crosshairElems = {};
-    clueOverlayElems = {};
+    cellElemsDict = {};
+    crosshairElemsDict = {};
+    clueOverlayElemsDict = {};
     selectedSymbol = SYMBOL_ID_FILL;
     isDrawing = false;
     drawCells = new Set();
     drawSymbol = null;
     drawStartRow = null;
     drawStartCol = null;
+    drawEndRow = null;
+    drawEndCol = null;
     currCrosshairElems = new Set();
+    drawCounterElem = null;
+    drawCounterText = "";
     imageCache = {}
 
     symbolClassNames = {
@@ -52,32 +58,34 @@ class Nonogram {
     }
 
     initialize() {
-        this.cellElems = {};
+        this.drawCounterElem = document.getElementById("draw-counter")
+
+        this.cellElemsDict = {};
         for (let rowIdx = 0; rowIdx < this.rows; rowIdx++) {
             for (let colIdx = 0; colIdx < this.rows; colIdx++) {
                 const cellId = getCellId(this.cols, rowIdx, colIdx);
-                this.cellElems[cellId] = document.getElementById(`cell_${cellId}`);
+                this.cellElemsDict[cellId] = document.getElementById(`cell_${cellId}`);
             }
         }
 
-        this.crosshairElems = {};
+        this.crosshairElemsDict = {};
         for (let rowIdx = 0; rowIdx < this.rows; rowIdx++) {
             const key = `row-${rowIdx}`;
             const query = `.overlay.${key}`;
             const elems = document.querySelectorAll(query);
-            this.crosshairElems[key] = elems;
+            this.crosshairElemsDict[key] = elems;
         }
         for (let colIdx = 0; colIdx < this.cols; colIdx++) {
             const key = `col-${colIdx}`;
             const query = `.overlay.${key}`;
             const elems = document.querySelectorAll(query);
-            this.crosshairElems[key] = elems;
+            this.crosshairElemsDict[key] = elems;
         }
 
-        this.clueOverlayElems = {};
+        this.clueOverlayElemsDict = {};
         const clueOverlays = document.querySelectorAll(".clue.overlay");
         clueOverlays.forEach(elem => {
-            this.clueOverlayElems[elem.id] = elem;
+            this.clueOverlayElemsDict[elem.id] = elem;
         });
     }
 
@@ -117,6 +125,8 @@ class Nonogram {
     startDrawing(sRow, sCol, drawSymbol) {
         this.drawStartRow = sRow;
         this.drawStartCol = sCol;
+        this.drawEndRow = sRow;
+        this.drawEndCol = sCol;
         this.isDrawing = true;
 
         this.drawCells.clear();
@@ -139,7 +149,12 @@ class Nonogram {
     }
 
     moveDrawing(eRow, eCol) {
-        const newDrawCells = this.getDrawCells(eRow, eCol);
+        const [newDrawCells, newEndRow, newEndCol] = this.getDrawCells(eRow, eCol);
+        this.drawEndRow = newEndRow;
+        this.drawEndCol = newEndCol;
+        if (newDrawCells.size > 1) {
+            this.drawCounterText = this.getDrawCounterText();
+        }
         this.renderDrawing(newDrawCells);
     }
 
@@ -149,6 +164,7 @@ class Nonogram {
             const [row, col] = getCellRowCol(cellId, this.cols);
             this.board[row][col] = this.drawSymbol;
         });
+        this.drawCounterElem.classList.remove(CLASSNAME_VISIBLE);
         this.renderDrawing();
     }
 
@@ -168,7 +184,7 @@ class Nonogram {
     }
 
     renderCell(cellId, symbolId, isDrawing) {
-        const elem = this.cellElems[cellId];
+        const elem = this.cellElemsDict[cellId];
         if (elem !== undefined && elem !== null) {
             elem.className = CLASSNAME_CELL_CONTENT;
 
@@ -200,21 +216,27 @@ class Nonogram {
         const horiDelta = eCol - sCol;
         const vertDelta = eRow - sRow;
         const isVerticalDraw = Math.abs(vertDelta) > Math.abs(horiDelta);
+
+        let newDrawEndRow = sRow;
+        let newDrawEndCol = sCol;
     
         // Horizontal Draw
         if (isVerticalDraw === false) {
             let col = Math.min(sCol, eCol);
             let end = Math.max(sCol, eCol);
+            newDrawEndCol = eCol;
             while (col <= end) {
                 let cellId = getCellId(this.cols, sRow, col);
                 drawCells.add(cellId);
                 col += 1;
             }
+
         }
         // Vertical Draw
         else {
             let row = Math.min(sRow, eRow);
             let end = Math.max(sRow, eRow);
+            newDrawEndRow = eRow;
             while (row <= end) {
                 let cellId = getCellId(this.cols, row, sCol);
                 drawCells.add(cellId);
@@ -222,7 +244,7 @@ class Nonogram {
             }
         }
         
-        return drawCells;
+        return [drawCells, newDrawEndRow, newDrawEndCol];
     }
 
     setCrosshair(rowIdx, colIdx) {
@@ -237,11 +259,11 @@ class Nonogram {
 
         const key1 = `row-${rowIdx}`;
         const key2 = `col-${colIdx}`;
-        this.crosshairElems[key1].forEach(elem => {
+        this.crosshairElemsDict[key1].forEach(elem => {
             elem.classList.add(CLASSNAME_CROSSHAIR_ACTIVE);
             this.currCrosshairElems.add(elem);
         });
-        this.crosshairElems[key2].forEach(elem => {
+        this.crosshairElemsDict[key2].forEach(elem => {
             elem.classList.add(CLASSNAME_CROSSHAIR_ACTIVE);
             this.currCrosshairElems.add(elem);
         });
@@ -256,7 +278,7 @@ class Nonogram {
                     if (this.topClueData[rowIdx][colIdx]) {
                         const idNum = getCellId(this.cols, rowIdx, colIdx);
                         const elemId = `top-clue-overlay-${idNum}`;
-                        const elem = this.clueOverlayElems[elemId];
+                        const elem = this.clueOverlayElemsDict[elemId];
                         elem.classList.toggle(CLASSNAME_CLUE_SLASH);
                     }
                 }
@@ -271,10 +293,98 @@ class Nonogram {
                     if (this.leftClueData[rowIdx][colIdx]) {
                         const idNum = getCellId(this.leftClueCols, rowIdx, colIdx);
                         const elemId = `left-clue-overlay-${idNum}`;
-                        const elem = this.clueOverlayElems[elemId];
+                        const elem = this.clueOverlayElemsDict[elemId];
                         elem.classList.toggle(CLASSNAME_CLUE_SLASH);
                     }
                 }
+            }
+        }
+    }
+
+    // DRAW COUNTER
+
+    updateDrawCounter(cursorPosX, cursorPosY) {
+        if (!this.isDrawing || this.drawCounterElem === null)
+            return;
+
+        if (this.drawCells.size < 2) {
+            this.drawCounterElem.classList.remove(CLASSNAME_TRANSITION);
+            this.drawCounterElem.classList.remove(CLASSNAME_VISIBLE);
+            return;
+        }
+
+        const transform = `translate(${cursorPosX}px, ${cursorPosY}px)`;
+        this.drawCounterElem.style.transform = transform;
+        this.drawCounterElem.innerHTML = this.drawCounterText;
+
+        if (!this.drawCounterElem.classList.contains(CLASSNAME_VISIBLE)) {
+            this.drawCounterElem.classList.remove(CLASSNAME_TRANSITION);
+            this.drawCounterElem.classList.add(CLASSNAME_VISIBLE);         
+        }
+        else {
+            this.drawCounterElem.classList.add(CLASSNAME_TRANSITION);
+        }
+    }
+
+    getDrawCounterText() {
+        let row, col, actualCount, totalCount;
+
+        // Horizontal draw.
+        if (this.drawStartRow === this.drawEndRow) {
+            row = this.drawStartRow;
+            actualCount = Math.abs(this.drawEndCol - this.drawStartCol) + 1;
+            totalCount = actualCount;
+
+            if (this.drawSymbol === SYMBOL_ID_EMPTY) {
+                return actualCount;
+            }
+
+            col = Math.min(this.drawEndCol, this.drawStartCol) - 1;
+            while (col >= 0 && this.board[row][col] === this.drawSymbol) {
+                totalCount += 1;
+                col -= 1;
+            }
+
+            col = Math.max(this.drawEndCol, this.drawStartCol) + 1;
+            while (col < this.cols && this.board[row][col] === this.drawSymbol) {
+                totalCount += 1;
+                col += 1;
+            }
+
+            if (actualCount === totalCount) {
+                return actualCount;
+            }
+            else {
+                return `${actualCount}/${totalCount}`;
+            }
+        }
+        // Vertical draw.
+        else {
+            col = this.drawStartCol;
+            actualCount = Math.abs(this.drawEndRow - this.drawStartRow) + 1;
+            totalCount = actualCount;
+
+            if (this.drawSymbol === SYMBOL_ID_EMPTY) {
+                return actualCount;
+            }
+
+            row = Math.min(this.drawEndRow, this.drawStartRow) - 1;
+            while (row >= 0 && this.board[row][col] === this.drawSymbol) {
+                totalCount += 1;
+                row -= 1;
+            }
+
+            row = Math.max(this.drawEndRow, this.drawStartRow) + 1;
+            while (row < this.cols && this.board[row][col] === this.drawSymbol) {
+                totalCount += 1;
+                row += 1;
+            }
+
+            if (actualCount === totalCount) {
+                return actualCount;
+            }
+            else {
+                return `${actualCount}/${totalCount}`;
             }
         }
     }
