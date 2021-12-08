@@ -16,7 +16,7 @@ function App(props) {
     const { setPuzzle } = props;
 
     useEffect(() => {
-        const puzzleData = input[2];
+        const puzzleData = input[0];
         setPuzzle(puzzleData);
         nonogram.setSize(puzzleData.rows, puzzleData.cols);
     }, [setPuzzle]);

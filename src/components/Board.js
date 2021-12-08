@@ -30,55 +30,50 @@ const mapDispatchToProps = (dispatch) => {
 
 class Board extends React.Component {
 
-    state = {
-        isPanning: false,
-        panOrigX: null,
-        panOrigY: null,
-        origOffsetX: 0,
-        origOffsetY: 0,
-        currOffsetX: 0,
-        currOffsetY: 0,
-    }
+    boardElem = null;
+    isPanning = false;
+    panOrigX = null;
+    panOrigY = null;
+    origOffsetX = 0;
+    origOffsetY = 0;
+    currOffsetX = 0;
+    currOffsetY = 0;
 
     componentDidUpdate() {
+        this.boardElem = document.getElementById("board");
         nonogram.initialize();
     }
 
     handleMouseDown = (e) => {
         if (e.button === MOUSE_MID_BTN) {
             e.preventDefault();
-            this.setState({
-                isPanning: true,
-                panOrigX: e.screenX,
-                panOrigY: e.screenY,
-                origOffsetX: this.state.currOffsetX,
-                origOffsetY: this.state.currOffsetY
-            });
+            this.isPanning = true;
+            this.panOrigX = e.screenX;
+            this.panOrigY = e.screenY;
+            this.origOffsetX = this.currOffsetX;
+            this.origOffsetY = this.currOffsetY;
         }
         document.addEventListener("mouseup", this.handleMouseUp);
     }
 
     handleMouseMove = (e) => {
-        if (this.state.isPanning) {
-            let deltaX = e.screenX - this.state.panOrigX;
-            let deltaY = e.screenY - this.state.panOrigY;
-            let newOffsetX = this.state.origOffsetX + deltaX;
-            let newOffsetY = this.state.origOffsetY + deltaY;
-            
-            this.setState({
-                currOffsetX: newOffsetX,
-                currOffsetY: newOffsetY
-            });
+        if (this.isPanning) {
+            let deltaX = e.screenX - this.panOrigX;
+            let deltaY = e.screenY - this.panOrigY;
+            let newOffsetX = this.origOffsetX + deltaX;
+            let newOffsetY = this.origOffsetY + deltaY;
+
+            this.currOffsetX = newOffsetX;
+            this.currOffsetY = newOffsetY;
+            this.boardElem.style.transform = `translate(${newOffsetX}px, ${newOffsetY}px)`;
         }
     }
 
     handleMouseUp = (e) => {
         if (e.button === MOUSE_MID_BTN) {
-            this.setState({
-                isPanning: false,
-                panOrigX: null,
-                panOrigY: null
-            });
+            this.isPanning = false;
+            this.panOrigX = null;
+            this.panOrigY = null;
         }
         document.removeEventListener("mouseup", this.handleMouseUp);
     }
@@ -111,8 +106,6 @@ class Board extends React.Component {
     }
 
     render() {
-        const { currOffsetX, currOffsetY } = this.state;
-
         const {
             rows,
             cols,
@@ -123,8 +116,6 @@ class Board extends React.Component {
             leftClueData,
         } = this.props;
 
-        let style = {transform: `translate(${currOffsetX}px, ${currOffsetY}px)`}
-
         return (
             <div id="board-container">
                 <div id="board-parent"
@@ -134,8 +125,7 @@ class Board extends React.Component {
                     onMouseLeave={() => this.enableScroll()}
                     onWheel={(e) => this.handleMouseWheel(e)}>
 
-                    <div id="board" style={style}>
-
+                    <div id="board">
                         <div id="top-container">
                             <TopPanel
                                 rows={topClueRows} cols={cols}
