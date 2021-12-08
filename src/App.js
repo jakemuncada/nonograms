@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import "./App.css";
-import nonogram from "./control/nonogram";
 import Board from "./components/Board";
 import input from "./input";
 import { setPuzzle } from "./redux/actions/board";
@@ -18,7 +17,6 @@ function App(props) {
     useEffect(() => {
         const puzzleData = input[0];
         setPuzzle(puzzleData);
-        nonogram.setSize(puzzleData.rows, puzzleData.cols);
     }, [setPuzzle]);
 
     return (

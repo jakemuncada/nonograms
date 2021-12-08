@@ -1,6 +1,11 @@
 import React from "react";
-import { COLOR_CELL_BORDER } from "../constants";
-import { getClueFontSize } from "../utils";
+import nonogram from "../control/nonogram";
+import { getCellId, getClueFontSize } from "../utils";
+import {
+    COLOR_CELL_BORDER,
+    MOUSE_PRIMARY_BTN,
+    MOUSE_SECONDARY_BTN
+} from "../constants";
 
 function TopPanel(props) {
     const { rows, cols, data, cellSize } = props;
@@ -17,12 +22,13 @@ function TopPanel(props) {
         return null;
     }
 
-    let tableRows = [];
+    const tableRows = [];
     for (let row = 0; row < rows; row++) {
-        let rowCells = [];
+        const rowCells = [];
         for (let col = 0; col < cols; col++) {
+            const key = getCellId(cols, row, col);
 
-            let tdStyle = {
+            const tdStyle = {
                 width: cellSize,
                 height: cellSize,
                 borderColor: COLOR_CELL_BORDER,
@@ -31,19 +37,24 @@ function TopPanel(props) {
                 fontSize: `${getClueFontSize(cellSize)}pt`,
             }
 
-            let overlayStyle = {
+            const overlayId = `top-clue-overlay-${key}`;
+            const overlayClassName = `clue overlay col-${col}`;
+            const overlayStyle = {
                 width: cellSize,
                 height: cellSize,
             }
 
-            let overlayClassName = `cell-overlay col-${col}`;
-
             const num = data[row][col] === null ? " " : data[row][col];
 
             rowCells.push(
-                <td key={rows * col + row} className="cell clue-cell" style={tdStyle}>
+                <td
+                    key={key}
+                    className="cell clue-cell"
+                    style={tdStyle}
+                    onMouseDown={(e) => toggleClue(e, row, col)}
+                    onMouseEnter={(e) => toggleClue(e, row, col)}>
                     <b>{num}</b>
-                    <div className={overlayClassName} style={overlayStyle} />
+                    <div id={overlayId} className={overlayClassName} style={overlayStyle} />
                 </td>
             );
         }
@@ -80,6 +91,12 @@ const getBorderWidth = (rows, cols, row, col) => {
     }
 
     return `${topBdr}px ${rightBdr}px ${botBdr}px ${leftBdr}px`;
+}
+
+const toggleClue = (e, row, col) => {
+    if (e.buttons === MOUSE_PRIMARY_BTN || e.buttons === MOUSE_SECONDARY_BTN) {
+        nonogram.toggleTopClue(row, col);
+    }
 }
 
 export default TopPanel;

@@ -22,7 +22,7 @@ function Cell(props) {
         height: contentSize
     }
 
-    const overlayClassName = `cell-overlay row-${row} col-${col}`;
+    const overlayClassName = `cell overlay row-${row} col-${col}`;
     const overlayStyle = {
         width: cellSize,
         height: cellSize,

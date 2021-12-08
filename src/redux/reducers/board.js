@@ -1,6 +1,7 @@
 import {
     CELL_SIZE_MIN,
 } from "../../constants";
+import nonogram from "../../control/nonogram";
 
 import {
     ADJUST_CELL_SIZE,
@@ -25,6 +26,9 @@ export default function (state = initialState, action) {
                 topClueRows, leftClueCols,
                 topClueData, leftClueData
             } = action.payload;
+
+            nonogram.setSize(rows, cols);
+            nonogram.setClues(topClueRows, topClueData, leftClueCols, leftClueData);
 
             return {
                 ...state,
