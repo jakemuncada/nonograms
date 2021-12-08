@@ -39,7 +39,7 @@ function Cell(props) {
             onMouseEnter={() => handleMouseEnter(row, col)}
         >
 
-            <div id={`cell_${id}`} className="cell-content" style={contentStyle} />
+            <div id={`cell-${id}`} className="cell-content" style={contentStyle} />
             <div className={overlayClassName} style={overlayStyle} />
             {coordDisplay}
         </td>

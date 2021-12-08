@@ -17,7 +17,8 @@ function App(props) {
     useEffect(() => {
         const puzzleData = input[0];
         setPuzzle(puzzleData);
-    }, [setPuzzle]);
+        // eslint-disable-next-line
+    }, []);
 
     return (
         <div className="App">

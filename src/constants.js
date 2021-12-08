@@ -4,7 +4,7 @@ export const MOUSE_MID_BTN = 1;
 export const MOUSE_RIGHT_BTN = 2;
 
 export const MOUSE_PRIMARY_BTN = 1;
-export const MOUSE_SECONDARY_BTN = 1;
+export const MOUSE_SECONDARY_BTN = 2;
 
 export const SYMBOL_ID_EMPTY = 0;
 export const SYMBOL_ID_FILL = 1;

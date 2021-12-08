@@ -64,7 +64,7 @@ class Nonogram {
         for (let rowIdx = 0; rowIdx < this.rows; rowIdx++) {
             for (let colIdx = 0; colIdx < this.rows; colIdx++) {
                 const cellId = getCellId(this.cols, rowIdx, colIdx);
-                this.cellElemsDict[cellId] = document.getElementById(`cell_${cellId}`);
+                this.cellElemsDict[cellId] = document.getElementById(`cell-${cellId}`);
             }
         }
 
