@@ -217,7 +217,7 @@ class Nonogram {
         drawCells.add(getCellId(this.cols, sRow, sCol));
     
         if (eRow === sRow && eCol === sCol) {
-            return drawCells;
+            return [drawCells, sRow, sCol];
         }
     
         const horiDelta = eCol - sCol;
