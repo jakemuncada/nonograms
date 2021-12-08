@@ -6,6 +6,10 @@ export const MOUSE_RIGHT_BTN = 2;
 export const MOUSE_PRIMARY_BTN = 1;
 export const MOUSE_SECONDARY_BTN = 2;
 
+export const DRAWING_DIR_POINT = 1;
+export const DRAWING_DIR_VERTICAL = 2;
+export const DRAWING_DIR_HORIZONTAL = 3;
+
 export const SYMBOL_ID_EMPTY = 0;
 export const SYMBOL_ID_FILL = 1;
 export const SYMBOL_ID_X = 2;
@@ -18,7 +22,6 @@ export const CLASSNAME_CROSSHAIR_ACTIVE = "crosshair-active";
 export const CLASSNAME_CLUE_SLASH = "clue-slash";
 export const CLASSNAME_VISIBLE = "visible";
 export const CLASSNAME_TRANSITION = "trans";
-
 
 export const SVG_CLASS_EMPTY = "cell-empty";
 export const SVG_CLASS_FILL = "cell-fill";

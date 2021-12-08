@@ -6,6 +6,9 @@ import {
     CLASSNAME_CROSSHAIR_ACTIVE,
     CLASSNAME_TRANSITION,
     CLASSNAME_VISIBLE,
+    DRAWING_DIR_HORIZONTAL,
+    DRAWING_DIR_POINT,
+    DRAWING_DIR_VERTICAL,
     SVG_URL_CLUE_SLASH,
     SVG_URL_FILL,
     SVG_URL_X,
@@ -28,12 +31,15 @@ class Nonogram {
     clueOverlayElemsDict = {};
     selectedSymbol = SYMBOL_ID_FILL;
     isDrawing = false;
+    drawingDir = null;
     drawCells = new Set();
     drawSymbol = null;
     drawStartRow = null;
     drawStartCol = null;
     drawEndRow = null;
     drawEndCol = null;
+    crosshairRow = null;
+    crosshairCol = null;
     currCrosshairElems = new Set();
     drawCounterElem = null;
     drawCounterText = "";
@@ -128,6 +134,7 @@ class Nonogram {
         this.drawEndRow = sRow;
         this.drawEndCol = sCol;
         this.isDrawing = true;
+        this.drawingDir = DRAWING_DIR_POINT;
 
         this.drawCells.clear();
         const newDrawCells = new Set();
@@ -149,9 +156,10 @@ class Nonogram {
     }
 
     moveDrawing(eRow, eCol) {
-        const [newDrawCells, newEndRow, newEndCol] = this.getDrawCells(eRow, eCol);
+        const [newDrawCells, newEndRow, newEndCol, dir] = this.getDrawCells(eRow, eCol);
         this.drawEndRow = newEndRow;
         this.drawEndCol = newEndCol;
+        this.drawingDir = dir;
         if (newDrawCells.size > 1) {
             this.drawCounterText = this.getDrawCounterText();
         }
@@ -217,18 +225,20 @@ class Nonogram {
         drawCells.add(getCellId(this.cols, sRow, sCol));
     
         if (eRow === sRow && eCol === sCol) {
-            return [drawCells, sRow, sCol];
+            return [drawCells, sRow, sCol, DRAWING_DIR_POINT];
         }
     
         const horiDelta = eCol - sCol;
         const vertDelta = eRow - sRow;
         const isVerticalDraw = Math.abs(vertDelta) > Math.abs(horiDelta);
 
+        let dir;
         let newDrawEndRow = sRow;
         let newDrawEndCol = sCol;
     
         // Horizontal Draw
         if (isVerticalDraw === false) {
+            dir = DRAWING_DIR_HORIZONTAL;
             let col = Math.min(sCol, eCol);
             let end = Math.max(sCol, eCol);
             newDrawEndCol = eCol;
@@ -241,6 +251,7 @@ class Nonogram {
         }
         // Vertical Draw
         else {
+            dir = DRAWING_DIR_VERTICAL;
             let row = Math.min(sRow, eRow);
             let end = Math.max(sRow, eRow);
             newDrawEndRow = eRow;
@@ -251,10 +262,13 @@ class Nonogram {
             }
         }
         
-        return [drawCells, newDrawEndRow, newDrawEndCol];
+        return [drawCells, newDrawEndRow, newDrawEndCol, dir];
     }
 
     setCrosshair(rowIdx, colIdx) {
+        this.crosshairRow = rowIdx;
+        this.crosshairCol = colIdx;
+
         this.currCrosshairElems.forEach(elem => {
             elem.classList.remove(CLASSNAME_CROSSHAIR_ACTIVE);
         });
