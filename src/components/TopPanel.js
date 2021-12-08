@@ -1,19 +1,9 @@
 import React from "react";
-import { connect } from "react-redux";
-import { COLOR_CELL_BORDER, COLOR_CROSSHAIR_OVERLAY } from "../constants";
+import { COLOR_CELL_BORDER } from "../constants";
 import { getClueFontSize } from "../utils";
 
-const mapStateToProps = (state) => {
-    return {
-        rows: state.clues.topClueRows,
-        cols: state.clues.topClueCols,
-        data: state.clues.topClueData,
-        cellSize: state.board.cellSize
-    };
-}
-
 function TopPanel(props) {
-    const { rows, cols, data, cellSize, crosshairCol } = props;
+    const { rows, cols, data, cellSize } = props;
 
     if (data === null || data.length <= 0) {
         return null;
@@ -44,15 +34,16 @@ function TopPanel(props) {
             let overlayStyle = {
                 width: cellSize,
                 height: cellSize,
-                backgroundColor: (col === crosshairCol) ? COLOR_CROSSHAIR_OVERLAY : "transparent"
             }
+
+            let overlayClassName = `cell-overlay col-${col}`;
 
             const num = data[row][col] === null ? " " : data[row][col];
 
             rowCells.push(
                 <td key={rows * col + row} className="cell clue-cell" style={tdStyle}>
                     <b>{num}</b>
-                    <div className="cell-overlay" style={overlayStyle} />
+                    <div className={overlayClassName} style={overlayStyle} />
                 </td>
             );
         }
@@ -91,4 +82,4 @@ const getBorderWidth = (rows, cols, row, col) => {
     return `${topBdr}px ${rightBdr}px ${botBdr}px ${leftBdr}px`;
 }
 
-export default connect(mapStateToProps)(TopPanel);
+export default TopPanel;

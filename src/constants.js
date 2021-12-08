@@ -8,6 +8,11 @@ export const SYMBOL_ID_FILL = 1;
 export const SYMBOL_ID_X = 2;
 
 export const COLOR_CELL_BORDER = "black";
-export const COLOR_CROSSHAIR_OVERLAY = "rgba(112, 128, 144, 0.15)";
-export const COLOR_SYMBOL_NORMAL = "black";
-export const COLOR_SYMBOL_DRAWING = "#4e4e4e";
+
+export const CLASSNAME_CELL_CONTENT = "cell-content";
+export const CLASSNAME_CELL_DRAWING = "cell-drawing";
+export const CLASSNAME_CROSSHAIR_ACTIVE = "crosshair-active";
+
+export const SVG_CLASS_EMPTY = "cell-empty";
+export const SVG_CLASS_FILL = "cell-fill";
+export const SVG_CLASS_X = "cell-x";

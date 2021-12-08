@@ -1,33 +1,30 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import "./App.css";
+import nonogram from "./control/nonogram";
 import Board from "./components/Board";
 import input from "./input";
-import { resetPuzzleData } from "./redux/actions/board";
-import { setLeftClues, setTopClues } from "./redux/actions/clues";
+import { setPuzzle } from "./redux/actions/board";
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        setPuzzle: (puzzleData) => {
-            const rows = puzzleData.rows;
-            const cols = puzzleData.cols;
-            const topClues = puzzleData.top;
-            const leftClues = puzzleData.left;
-            dispatch(setTopClues(rows, cols, topClues));
-            dispatch(setLeftClues(rows, cols, leftClues));
-            dispatch(resetPuzzleData(rows, cols));
-        }
+        setPuzzle: (puzzleData) => dispatch(setPuzzle(puzzleData))
     }
 }
 
 function App(props) {
-    let puzzleData = input[2];
-    props.setPuzzle(puzzleData);
+    const { setPuzzle } = props;
+
+    useEffect(() => {
+        const puzzleData = input[2];
+        setPuzzle(puzzleData);
+        nonogram.setSize(puzzleData.rows, puzzleData.cols);
+    }, [setPuzzle]);
 
     return (
         <div className="App">
             <div className="App-body">
-                <Board data={puzzleData} />
+                <Board />
             </div>
         </div>
     );

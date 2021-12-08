@@ -1,27 +1,28 @@
 import {
-    SET_PUZZLE_DATA,
-    RESET_PUZZLE_DATA,
+    SET_PUZZLE,
     ADJUST_CELL_SIZE,
-    SET_CROSSHAIR,
-    START_DRAW,
-    END_DRAW,
-    MOVE_DRAW
 } from "../actionTypes";
 
-export const resetPuzzleData = (rows, cols) => ({
-    type: RESET_PUZZLE_DATA,
-    payload: {
-        rows: rows,
-        cols: cols
-    }
-});
+export const setPuzzle = (puzzleData) => {
+    const rows = puzzleData.rows;
+    const cols = puzzleData.cols;
+    const topClueRows = getTopClueRows(puzzleData.top);
+    const topClueData = getTopClueData(puzzleData.top, topClueRows, cols);
+    const leftClueCols = getLeftClueCols(puzzleData.left);
+    const leftClueData = getLeftClueData(puzzleData.left, rows, leftClueCols);
 
-export const setPuzzleData = (data) => ({
-    type: SET_PUZZLE_DATA,
-    payload: {
-        data: data
-    }
-});
+    return {
+        type: SET_PUZZLE,
+        payload: {
+            rows: rows,
+            cols: cols,
+            topClueRows: topClueRows,
+            topClueData: topClueData,
+            leftClueCols: leftClueCols,
+            leftClueData: leftClueData
+        }
+    };
+}
 
 export const adjustCellSize = (amount) => ({
     type: ADJUST_CELL_SIZE,
@@ -30,31 +31,66 @@ export const adjustCellSize = (amount) => ({
     }
 });
 
-export const setCrosshair = (row, col) => ({
-    type: SET_CROSSHAIR,
-    payload: {
-        row: row,
-        col: col
+const getTopClueRows = (data) => {
+    let maxRows = 0;
+    for (let col = 0; col < data.length; col++) {
+        maxRows = Math.max(maxRows, data[col].length);
     }
-});
+    return maxRows;
+}
 
-export const startDraw = (row, col, symbolId) => ({
-    type: START_DRAW,
-    payload: {
-        row: row,
-        col: col,
-        symbolId: symbolId
-    },
-});
+const getLeftClueCols = (data) => {
+    let maxCols = 0;
+    for (let row = 0; row < data.length; row++) {
+        maxCols = Math.max(maxCols, data[row].length);
+    }
+    return maxCols;
+}
 
-export const endDraw = () => ({
-    type: END_DRAW,
-});
+const getTopClueData = (data, rows, cols) => {
+    let clueData = [];
 
-export const moveDraw = (row, col) => ({
-    type: MOVE_DRAW,
-    payload: {
-        row: row,
-        col: col,
-    },
-});
+    // Fill in the 2D array with null values.
+    for (let row = 0; row < rows; row++) {
+        let rowArr = []
+        for (let col = 0; col < cols; col++) {
+            rowArr.push(null);
+        }
+        clueData.push(rowArr);
+    }
+
+    // Then, fill in the actual data into the table.
+    for (let col = 0; col < data.length; col++) {
+        let row = rows - 1;
+        for (let idx = 0; idx < data[col].length; idx++) {
+            clueData[row][col] = data[col][idx];
+            row -= 1;
+        }
+    }
+
+    return clueData;
+}
+
+const getLeftClueData = (data, rows, cols) => {
+    let clueData = [];
+
+    // Fill in the 2D array with null values.
+    for (let row = 0; row < rows; row++) {
+        let rowArr = []
+        for (let col = 0; col < cols; col++) {
+            rowArr.push(null);
+        }
+        clueData.push(rowArr);
+    }
+
+    // Then, fill in the actual data into the table.
+    for (let row = 0; row < data.length; row++) {
+        let col = cols - 1;
+        for (let idx = 0; idx < data[row].length; idx++) {
+            clueData[row][col] = data[row][idx];
+            col -= 1;
+        }
+    }
+
+    return clueData;
+}

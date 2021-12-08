@@ -1,19 +1,9 @@
 import React from "react";
-import { connect } from "react-redux";
-import { COLOR_CELL_BORDER, COLOR_CROSSHAIR_OVERLAY } from "../constants";
+import { COLOR_CELL_BORDER } from "../constants";
 import { getClueFontSize } from "../utils";
 
-const mapStateToProps = (state) => {
-    return {
-        rows: state.clues.leftClueRows,
-        cols: state.clues.leftClueCols,
-        data: state.clues.leftClueData,
-        cellSize: state.board.cellSize
-    };
-}
-
 function LeftPanel(props) {
-    const { rows, cols, data, cellSize, crosshairRow } = props;
+    const { rows, cols, data, cellSize } = props;
 
     if (data === null || data.length <= 0) {
         return null;
@@ -45,15 +35,16 @@ function LeftPanel(props) {
             let overlayStyle = {
                 width: cellSize,
                 height: cellSize,
-                backgroundColor: (row === crosshairRow) ? COLOR_CROSSHAIR_OVERLAY : "transparent"
             }
+
+            let overlayClassName = `cell-overlay row-${row}`;
 
             const num = data[row][col] === null ? " " : data[row][col];
 
             rowCells.push(
                 <td key={rows * col + row} className="cell clue-cell" style={tdStyle}>
                     <b>{num}</b>
-                    <div className="cell-overlay" style={overlayStyle} />
+                    <div className={overlayClassName} style={overlayStyle} />
                 </td>
             );
         }
@@ -92,4 +83,4 @@ const getBorderWidth = (rows, cols, row, col) => {
     return `${topBdr}px ${rightBdr}px ${botBdr}px ${leftBdr}px`;
 }
 
-export default connect(mapStateToProps)(LeftPanel);
+export default LeftPanel;

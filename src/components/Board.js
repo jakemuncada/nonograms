@@ -3,8 +3,23 @@ import { connect } from "react-redux";
 import Grid from "./Grid";
 import TopPanel from "./TopPanel";
 import LeftPanel from "./LeftPanel";
+import nonogram from "../control/nonogram";
 import { adjustCellSize } from "../redux/actions/board";
 import { MOUSE_MID_BTN } from "../constants";
+
+const mapStateToProps = (state) => {
+    return {
+        rows: state.board.rows,
+        cols: state.board.cols,
+        cellSize: state.board.cellSize,
+        topClueRows: state.board.topClueRows,
+        topClueCols: state.board.topClueCols,
+        topClueData: state.board.topClueData,
+        leftClueRows: state.board.leftClueRows,
+        leftClueCols: state.board.leftClueCols,
+        leftClueData: state.board.leftClueData,
+    };
+};
 
 const mapDispatchToProps = (dispatch) => {
     return {
@@ -23,6 +38,10 @@ class Board extends React.Component {
         origOffsetY: 0,
         currOffsetX: 0,
         currOffsetY: 0,
+    }
+
+    componentDidUpdate() {
+        nonogram.initialize();
     }
 
     handleMouseDown = (e) => {
@@ -94,6 +113,16 @@ class Board extends React.Component {
     render() {
         const { currOffsetX, currOffsetY } = this.state;
 
+        const {
+            rows,
+            cols,
+            cellSize,
+            topClueRows,
+            topClueData,
+            leftClueCols,
+            leftClueData,
+        } = this.props;
+
         let style = {transform: `translate(${currOffsetX}px, ${currOffsetY}px)`}
 
         return (
@@ -108,13 +137,19 @@ class Board extends React.Component {
                     <div id="board" style={style}>
 
                         <div id="top-container">
-                            <TopPanel />
+                            <TopPanel
+                                rows={topClueRows} cols={cols}
+                                cellSize={cellSize}
+                                data={topClueData} />
                         </div>
                         <div id="grid-container">
-                            <Grid />
+                            <Grid rows={rows} cols={cols} cellSize={cellSize} />
                         </div>
                         <div id="left-container">
-                            <LeftPanel />
+                            <LeftPanel 
+                                rows={rows} cols={leftClueCols}
+                                cellSize={cellSize}
+                                data={leftClueData} />
                         </div>
                     </div>
                 </div>
@@ -123,4 +158,4 @@ class Board extends React.Component {
     }
 }
 
-export default connect(null, mapDispatchToProps)(Board);
+export default connect(mapStateToProps, mapDispatchToProps)(Board);

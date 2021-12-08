@@ -72,6 +72,23 @@ table {
     position: relative;
     margin: 0;
     padding: 0;
+    background-size: cover;
+}
+
+.cell-fill {
+    background-image: url('/images/fill.svg');
+}
+
+.cell-x {
+    background-image: url('/images/x.svg');
+}
+
+.cell-drawing {
+    filter: invert(30%) sepia(10%) saturate(0%) hue-rotate(169deg) brightness(93%) contrast(89%);
+}
+
+.cell-empty {
+    background-image: transparent !important;
 }
 
 .cell-overlay {
@@ -80,6 +97,10 @@ table {
     top: 0;
     margin: 0;
     padding: 0;
+}
+
+.crosshair-active {
+    background-color: rgba(112, 128, 144, 0.15);
 }
 
 .coord-disp {
