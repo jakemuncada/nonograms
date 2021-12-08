@@ -3,6 +3,8 @@ import {
     CLASSNAME_CELL_CONTENT,
     CLASSNAME_CELL_DRAWING,
     CLASSNAME_CROSSHAIR_ACTIVE,
+    SVG_URL_FILL,
+    SVG_URL_X,
     SYMBOL_ID_EMPTY,
     SYMBOL_ID_FILL,
     SYMBOL_ID_X
@@ -22,6 +24,7 @@ class Nonogram {
     drawStartRow = null;
     drawStartCol = null;
     currCrosshairElems = new Set();
+    imageCache = {}
 
     symbolClassNames = {
         [SYMBOL_ID_EMPTY]: null,
@@ -31,6 +34,12 @@ class Nonogram {
 
     constructor(rows = 0, cols = 0) {
         this.setSize(rows, cols);
+
+        // Preload images.
+        this.imageCache["fill"] = new Image();
+        this.imageCache["fill"].src = SVG_URL_FILL;
+        this.imageCache["x"] = new Image();
+        this.imageCache["x"].src = SVG_URL_X;
     }
 
     setSize(rows, cols) {

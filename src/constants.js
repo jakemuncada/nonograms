@@ -16,3 +16,6 @@ export const CLASSNAME_CROSSHAIR_ACTIVE = "crosshair-active";
 export const SVG_CLASS_EMPTY = "cell-empty";
 export const SVG_CLASS_FILL = "cell-fill";
 export const SVG_CLASS_X = "cell-x";
+
+export const SVG_URL_FILL = "/images/fill.svg";
+export const SVG_URL_X = "/images/x.svg";
