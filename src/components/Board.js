@@ -5,7 +5,8 @@ import TopPanel from "./TopPanel";
 import LeftPanel from "./LeftPanel";
 import nonogram from "../control/nonogram";
 import { adjustCellSize } from "../redux/actions/board";
-import { MOUSE_MID_BTN } from "../constants";
+import { ELEM_ID_DRAW_TOOLTIP, MOUSE_MID_BTN } from "../constants";
+import RulerTooltip from "./RulerTooltip";
 
 const mapStateToProps = (state) => {
     return {
@@ -66,9 +67,6 @@ class Board extends React.Component {
             this.currOffsetX = newOffsetX;
             this.currOffsetY = newOffsetY;
             this.boardElem.style.transform = `translate(${newOffsetX}px, ${newOffsetY}px)`;
-        }
-        else if (nonogram.isDrawing) {
-            nonogram.updateDrawCounter(e.clientX, e.clientY);
         }
     }
 
@@ -137,7 +135,6 @@ class Board extends React.Component {
                         </div>
                         <div id="grid-container">
                             <Grid rows={rows} cols={cols} cellSize={cellSize} />
-                            <div id="draw-counter" />
                         </div>
                         <div id="left-container">
                             <LeftPanel 
@@ -147,6 +144,7 @@ class Board extends React.Component {
                         </div>
                     </div>
                 </div>
+                <RulerTooltip id={ELEM_ID_DRAW_TOOLTIP} />
             </div>
         );
     }

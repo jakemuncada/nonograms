@@ -1,11 +1,10 @@
+import DrawCounter from "./draw-counter";
 import { arr2dClone, getCellId, getCellRowCol } from "../utils";
 import {
     CLASSNAME_CELL_CONTENT,
     CLASSNAME_CELL_DRAWING,
     CLASSNAME_CLUE_SLASH,
     CLASSNAME_CROSSHAIR_ACTIVE,
-    CLASSNAME_TRANSITION,
-    CLASSNAME_VISIBLE,
     DRAWING_DIR_HORIZONTAL,
     DRAWING_DIR_POINT,
     DRAWING_DIR_VERTICAL,
@@ -41,8 +40,6 @@ class Nonogram {
     crosshairRow = null;
     crosshairCol = null;
     currCrosshairElems = new Set();
-    drawCounterElem = null;
-    drawCounterText = "";
     imageCache = {}
 
     symbolClassNames = {
@@ -51,8 +48,9 @@ class Nonogram {
         [SYMBOL_ID_X]: "cell-x"
     };
 
-    constructor(rows = 0, cols = 0) {
-        this.setSize(rows, cols);
+    constructor(rows = 0, cols = 0, cellSize = 0) {
+        this.drawCounter = new DrawCounter(rows, cols, cellSize);
+        this.setSize(rows, cols, cellSize);
 
         // Preload images.
         this.imageCache["fill"] = new Image();
@@ -64,7 +62,7 @@ class Nonogram {
     }
 
     initialize() {
-        this.drawCounterElem = document.getElementById("draw-counter")
+        this.drawCounter.initialize();
 
         this.cellElemsDict = {};
         for (let rowIdx = 0; rowIdx < this.rows; rowIdx++) {
@@ -95,9 +93,11 @@ class Nonogram {
         });
     }
 
-    setSize(rows, cols) {
+    setSize(rows, cols, cellSize) {
         this.rows = rows;
         this.cols = cols;
+        this.cellSize = cellSize;
+        this.drawCounter.setSize(rows, cols, cellSize);
 
         if (rows === 0 || cols === 0) {
             this.board = null;
@@ -126,6 +126,11 @@ class Nonogram {
         this.leftClueData = arr2dClone(leftClueData);
     }
 
+    getCellElement(row, col) {
+        const cellId = getCellId(this.cols, row, col);
+        return this.cellElemsDict[cellId];
+    }
+
     // DRAWING
 
     startDrawing(sRow, sCol, drawSymbol) {
@@ -135,6 +140,8 @@ class Nonogram {
         this.drawEndCol = sCol;
         this.isDrawing = true;
         this.drawingDir = DRAWING_DIR_POINT;
+
+        this.drawCounter.hide();
 
         this.drawCells.clear();
         const newDrawCells = new Set();
@@ -160,9 +167,14 @@ class Nonogram {
         this.drawEndRow = newEndRow;
         this.drawEndCol = newEndCol;
         this.drawingDir = dir;
+
         if (newDrawCells.size > 1) {
-            this.drawCounterText = this.getDrawCounterText();
+            const sCell = this.getCellElement(this.drawStartRow, this.drawStartCol);
+            const eCell = this.getCellElement(newEndRow, newEndCol);
+            this.drawCounter.update(this.drawStartRow, this.drawStartCol,
+                newEndRow, newEndCol, this.board, this.drawSymbol, sCell, eCell);
         }
+
         this.renderDrawing(newDrawCells);
     }
 
@@ -172,7 +184,8 @@ class Nonogram {
             const [row, col] = getCellRowCol(cellId, this.cols);
             this.board[row][col] = this.drawSymbol;
         });
-        this.drawCounterElem.classList.remove(CLASSNAME_VISIBLE);
+
+        this.drawCounter.hide();
         this.renderDrawing();
     }
 
@@ -318,94 +331,6 @@ class Nonogram {
                         elem.classList.toggle(CLASSNAME_CLUE_SLASH);
                     }
                 }
-            }
-        }
-    }
-
-    // DRAW COUNTER
-
-    updateDrawCounter(cursorPosX, cursorPosY) {
-        if (!this.isDrawing || this.drawCounterElem === null)
-            return;
-
-        if (this.drawCells.size < 2) {
-            this.drawCounterElem.classList.remove(CLASSNAME_TRANSITION);
-            this.drawCounterElem.classList.remove(CLASSNAME_VISIBLE);
-            return;
-        }
-
-        const transform = `translate(${cursorPosX}px, ${cursorPosY}px)`;
-        this.drawCounterElem.style.transform = transform;
-        this.drawCounterElem.innerHTML = this.drawCounterText;
-
-        if (!this.drawCounterElem.classList.contains(CLASSNAME_VISIBLE)) {
-            this.drawCounterElem.classList.remove(CLASSNAME_TRANSITION);
-            this.drawCounterElem.classList.add(CLASSNAME_VISIBLE);         
-        }
-        else {
-            this.drawCounterElem.classList.add(CLASSNAME_TRANSITION);
-        }
-    }
-
-    getDrawCounterText() {
-        let row, col, actualCount, totalCount;
-
-        // Horizontal draw.
-        if (this.drawStartRow === this.drawEndRow) {
-            row = this.drawStartRow;
-            actualCount = Math.abs(this.drawEndCol - this.drawStartCol) + 1;
-            totalCount = actualCount;
-
-            if (this.drawSymbol === SYMBOL_ID_EMPTY) {
-                return actualCount;
-            }
-
-            col = Math.min(this.drawEndCol, this.drawStartCol) - 1;
-            while (col >= 0 && this.board[row][col] === this.drawSymbol) {
-                totalCount += 1;
-                col -= 1;
-            }
-
-            col = Math.max(this.drawEndCol, this.drawStartCol) + 1;
-            while (col < this.cols && this.board[row][col] === this.drawSymbol) {
-                totalCount += 1;
-                col += 1;
-            }
-
-            if (actualCount === totalCount) {
-                return actualCount;
-            }
-            else {
-                return `${actualCount}/${totalCount}`;
-            }
-        }
-        // Vertical draw.
-        else {
-            col = this.drawStartCol;
-            actualCount = Math.abs(this.drawEndRow - this.drawStartRow) + 1;
-            totalCount = actualCount;
-
-            if (this.drawSymbol === SYMBOL_ID_EMPTY) {
-                return actualCount;
-            }
-
-            row = Math.min(this.drawEndRow, this.drawStartRow) - 1;
-            while (row >= 0 && this.board[row][col] === this.drawSymbol) {
-                totalCount += 1;
-                row -= 1;
-            }
-
-            row = Math.max(this.drawEndRow, this.drawStartRow) + 1;
-            while (row < this.cols && this.board[row][col] === this.drawSymbol) {
-                totalCount += 1;
-                row += 1;
-            }
-
-            if (actualCount === totalCount) {
-                return actualCount;
-            }
-            else {
-                return `${actualCount}/${totalCount}`;
             }
         }
     }

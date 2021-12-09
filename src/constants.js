@@ -14,7 +14,17 @@ export const SYMBOL_ID_EMPTY = 0;
 export const SYMBOL_ID_FILL = 1;
 export const SYMBOL_ID_X = 2;
 
+export const RULER_TOOLTIP_WIDTH = 44;
+export const RULER_TOOLTIP_HEIGHT = 38;
+export const RULER_TOOLTIP_HALF_WIDTH = RULER_TOOLTIP_WIDTH / 2;
+export const RULER_TOOLTIP_HALF_HEIGHT = RULER_TOOLTIP_HEIGHT / 2;
+export const RULER_TOOLTIP_FONT_SIZE = 14;
+export const RULER_TOOLTIP_OFFSET_X = 4;
+export const RULER_TOOLTIP_OFFSET_Y = 10;
+
 export const COLOR_CELL_BORDER = "black";
+
+export const ELEM_ID_DRAW_TOOLTIP = "draw-tooltip";
 
 export const CLASSNAME_CELL_CONTENT = "cell-content";
 export const CLASSNAME_CELL_DRAWING = "cell-drawing";
