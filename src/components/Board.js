@@ -40,7 +40,7 @@ class Board extends React.Component {
     currOffsetX = 0;
     currOffsetY = 0;
 
-    componentDidUpdate() {
+    componentDidMount() {
         this.boardElem = document.getElementById("board");
         nonogram.initialize();
     }

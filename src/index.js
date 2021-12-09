@@ -5,6 +5,20 @@ import store from "./redux/store";
 import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
+import Puzzle from "./control/puzzle";
+import input from "./input";
+import { setPuzzle } from "./redux/actions/board";
+
+const puzzleData = input[0];
+Puzzle.initialize(puzzleData);
+
+store.dispatch(setPuzzle(
+    Puzzle.rows,
+    Puzzle.cols,
+    Puzzle.topClueRows,
+    Puzzle.topClueData,
+    Puzzle.leftClueCols,
+    Puzzle.leftClueData));
 
 document.addEventListener('contextmenu', event => event.preventDefault());
 

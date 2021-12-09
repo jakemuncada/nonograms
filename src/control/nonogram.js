@@ -293,14 +293,22 @@ class Nonogram {
 
         const key1 = `row-${rowIdx}`;
         const key2 = `col-${colIdx}`;
-        this.crosshairElemsDict[key1].forEach(elem => {
-            elem.classList.add(CLASSNAME_CROSSHAIR_ACTIVE);
-            this.currCrosshairElems.add(elem);
-        });
-        this.crosshairElemsDict[key2].forEach(elem => {
-            elem.classList.add(CLASSNAME_CROSSHAIR_ACTIVE);
-            this.currCrosshairElems.add(elem);
-        });
+        if (this.crosshairElemsDict[key1]) {
+            this.crosshairElemsDict[key1].forEach(elem => {
+                elem.classList.add(CLASSNAME_CROSSHAIR_ACTIVE);
+                this.currCrosshairElems.add(elem);
+            });
+        } else {
+            console.error(`Failed to set crosshair, element '${key1}' not found.`);
+        }
+        if (this.crosshairElemsDict[key2]) {
+            this.crosshairElemsDict[key2].forEach(elem => {
+                elem.classList.add(CLASSNAME_CROSSHAIR_ACTIVE);
+                this.currCrosshairElems.add(elem);
+            });
+        } else {
+            console.error(`Failed to set crosshair, element '${key2}' not found.`);
+        }
     }
 
     // CLUE DRAWING
