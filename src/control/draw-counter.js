@@ -226,6 +226,11 @@ class DrawCounter {
         return [midX, midY];
     }
 
+    /**
+     * Updates the width of the tooltip depending on its text.
+     * 
+     * @param {string} text The tooltip text.
+     */
     updateWidth(text) {
         let width = RULER_TOOLTIP_HEIGHT;
         if (text.length > 4) {
@@ -236,6 +241,11 @@ class DrawCounter {
         this.setTooltipWidth(width);
     }
 
+    /**
+     * Sets the tooltip width.
+     * 
+     * @param {number} width The new width of the tooltip.
+     */
     setTooltipWidth(width) {
         if (this.mainElem) {
             this.mainElem.style.width = `${width}px`;
