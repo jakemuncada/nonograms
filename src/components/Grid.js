@@ -1,6 +1,6 @@
 import React from "react";
 import Cell from "./Cell";
-import nonogram from "../control/nonogram";
+import Nonogram from "../control/NonogramManager";
 import { getCellId } from "../utils";
 
 import {
@@ -17,32 +17,32 @@ class Grid extends React.Component {
     handleMouseDownOnCell = (e, cellRow, cellCol) => {
         let drawSymbol = null;
         if (e.button === MOUSE_LEFT_BTN) {
-            drawSymbol = nonogram.selectedSymbol;
+            drawSymbol = Nonogram.selectedSymbol;
         }
         else if (e.button === MOUSE_RIGHT_BTN) {
             drawSymbol = SYMBOL_ID_X;
         }
 
         if (drawSymbol !== null) {
-            nonogram.startDrawing(cellRow, cellCol, drawSymbol);
+            Nonogram.drawMgr.start(cellRow, cellCol, drawSymbol);
         }
 
         document.addEventListener("mouseup", this.handleMouseUp);
     }
 
     handleMouseEnterOnCell = (cellRow, cellCol) => {
-        if (nonogram.isDrawing) {
-            nonogram.moveDrawing(cellRow, cellCol);
+        if (Nonogram.drawMgr.isDrawing) {
+            Nonogram.drawMgr.move(cellRow, cellCol);
         }
-        nonogram.setCrosshair(cellRow, cellCol);
+        Nonogram.crosshairMgr.show(cellRow, cellCol);
     }
 
     handleMouseLeaveTable = () => {
-        nonogram.setCrosshair(null, null);
+        Nonogram.crosshairMgr.clear();
     }
 
     handleMouseUp = () => {
-        nonogram.endDrawing();
+        Nonogram.drawMgr.end();
         document.removeEventListener("mouseup", this.handleMouseUp);
     }
 

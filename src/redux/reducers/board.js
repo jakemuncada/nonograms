@@ -1,11 +1,9 @@
 import {
     CELL_SIZE_MIN,
 } from "../../constants";
-import nonogram from "../../control/nonogram";
 
 import {
     ADJUST_CELL_SIZE,
-    SET_DRAW_RULER,
     SET_PUZZLE,
 } from "../actionTypes";
 
@@ -17,8 +15,6 @@ const initialState = {
     topClueData: [],
     leftClueCols: 0,
     leftClueData: [],
-    drawRulerText: "",
-    isDrawRulerWide: false
 };
 
 export default function (state = initialState, action) {
@@ -29,9 +25,6 @@ export default function (state = initialState, action) {
                 topClueRows, leftClueCols,
                 topClueData, leftClueData
             } = action.payload;
-
-            nonogram.setSize(rows, cols, state.cellSize);
-            nonogram.setClues(topClueRows, topClueData, leftClueCols, leftClueData);
 
             return {
                 ...state,
@@ -47,18 +40,9 @@ export default function (state = initialState, action) {
             let newCellSize = state.cellSize + action.payload.amount;
             newCellSize = Math.max(newCellSize, CELL_SIZE_MIN);
 
-            nonogram.setSize(state.rows, state.cols, newCellSize);
-
             return {
                 ...state,
                 cellSize: newCellSize
-            }
-
-        case SET_DRAW_RULER:
-            return {
-                ...state,
-                drawRulerText: action.payload.text,
-                isDrawRulerWide: action.payload.isWide
             }
 
         default:

@@ -5,7 +5,7 @@ import store from "./redux/store";
 import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
-import Puzzle from "./control/puzzle";
+import Puzzle from "./control/Puzzle";
 import input from "./input";
 import { setPuzzle } from "./redux/actions/board";
 

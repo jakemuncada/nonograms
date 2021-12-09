@@ -8,25 +8,12 @@ import {
     SYMBOL_ID_EMPTY
 } from "../constants";
 
-class DrawCounter {
-
-    /** 
-     * The number of rows of the board.
-     * @type {number}
+class DrawCountManager {
+    
+    /**
+     * The puzzle object.
      */
-    rows = 0;
-
-    /** 
-     * The number of columns of the board.
-     * @type {number}
-     */
-    cols = 0;
-
-    /** 
-     * The size of the cells of the board.
-     * @type {number}
-     */
-    cellSize = 0;
+    puzzle = null;
 
     /** 
      * The DOM element of the tooltip.
@@ -40,10 +27,13 @@ class DrawCounter {
      */
     textElem = null;
 
-    constructor(rows, cols, cellSize) {
-        this.rows = rows;
-        this.cols = cols;
-        this.cellSize = cellSize;
+    /**
+     * Constructor for a DrawCounter.
+     * 
+     * @param {object} puzzle The puzzle object.
+     */
+    constructor(puzzle) {
+        this.puzzle = puzzle;
     }
 
     /**
@@ -52,19 +42,6 @@ class DrawCounter {
     initialize() {
         this.mainElem = document.getElementById(ELEM_ID_DRAW_TOOLTIP);
         this.textElem = document.getElementById(ELEM_ID_DRAW_TOOLTIP + "-text");
-    }
-
-    /**
-     * Set the board size.
-     * 
-     * @param {number} rows The number of rows on the board.
-     * @param {number} cols The number of columns on the board.
-     * @param {number} cellSize The size of the cells in pixels.
-     */
-    setSize(rows, cols, cellSize) {
-        this.rows = rows;
-        this.cols = cols;
-        this.cellSize = cellSize;
     }
 
     /**
@@ -140,7 +117,6 @@ class DrawCounter {
      * @param {number} eCol The column of the cell where the drawn line ends.
      * @param {object} sCell The starting cell's DOM object.
      * @param {object} eCell The ending cell's DOM object.
-     * 
      * @returns {Array<number>} The array containing the x and y coordinates of the tooltip.
      */
     getPosition(sRow, sCol, eRow, eCol, sCell, eCell) {
@@ -154,34 +130,38 @@ class DrawCounter {
         }
 
         let posX, posY, margin;
-        const [midX, midY] = this.getMidpoint(sCell, eCell);
+        const rect1 = sCell.getBoundingClientRect();
+        const rect2 = eCell.getBoundingClientRect();
+        const [midX, midY] = this.getMidpoint(rect1, rect2);
 
         // Horizontal draw.
         if (sRow === eRow) {
             posX = midX;
             const rowsAbove = sRow;
-            const rowsBelow = this.rows - (sRow + 1);
-            margin = RULER_TOOLTIP_HALF_HEIGHT + (this.cellSize / 2) + 4;
+            const rowsBelow = this.puzzle.rows - (sRow + 1);
+            margin = RULER_TOOLTIP_HALF_HEIGHT + 4;
 
             // If there is more space above the drawn row, position the tooltip above.
+            // Else, if there is more space below the drawn row, position the tooltip below.
             if (rowsAbove >= rowsBelow) {
-                posY = midY - margin;
+                posY = rect1.top - margin;
             } else {
-                posY = midY + margin;
+                posY = rect1.bottom + margin;
             }
         }
         // Vertical draw.
         else if (sCol === eCol) {
             posY = midY;
             const colsLeft = sCol;
-            const colsRight = this.cols - (sCol + 1);
-            margin = RULER_TOOLTIP_HALF_WIDTH + (this.cellSize / 2) + 4;
+            const colsRight = this.puzzle.cols - (sCol + 1);
+            margin = RULER_TOOLTIP_HALF_WIDTH + 4;
 
-            // If there is more space above the drawn row, position the tooltip above.
+            // If there is more space to the left of the drawn row, position the tooltip to the left.
+            // Else, if there is more space to the right of the drawn row, position the tooltip to the right.
             if (colsLeft >= colsRight) {
-                posX = midX - margin;
+                posX = rect1.left - margin;
             } else {
-                posX = midX + margin;
+                posX = rect1.right + margin;
             }
         }
         // Invalid case: Diagonal draw.
@@ -194,26 +174,22 @@ class DrawCounter {
     }
 
     /**
-     * Gets the x and y coordinates of the midpoint between the two elements.
+     * Gets the x and y coordinates of the midpoint between the two elements' bounding rects.
      * 
-     * @param {object} elem1 The first DOM element.
-     * @param {object} elem2 The second DOM element.
-     * 
+     * @param {object} rect1 The first DOM element's bounding rect.
+     * @param {object} rect2 The second DOM element's bounding rect.
      * @returns {Array<number>} An array containing the x and y coordinates
      *      of the midpoint between the two elements.
      */
-    getMidpoint(elem1, elem2) {
-        if (elem1 === null || elem1 === undefined) {
-            console.error("Cannot get midpoint, elem1 not found.");
+    getMidpoint(rect1, rect2) {
+        if (rect1 === null || rect1 === undefined) {
+            console.error("Cannot get midpoint, rect1 not found.");
             return;
         }
-        if (elem2 === null || elem2 === undefined) {
-            console.error("Cannot get midpoint, elem2 not found.");
+        if (rect2 === null || rect2 === undefined) {
+            console.error("Cannot get midpoint, rect2 not found.");
             return;
         }
-
-        const rect1 = elem1.getBoundingClientRect();
-        const rect2 = elem2.getBoundingClientRect();
 
         const minX = Math.min(rect1.left, rect2.left);
         const maxX = Math.max(rect1.right, rect2.right);
@@ -272,7 +248,6 @@ class DrawCounter {
      * @param {number} eCol The column of the cell where the drawn line ends.
      * @param {Array<Array<number>>} board The 2-dimensional array containing the symbol IDs of each cell.
      * @param {number} drawSymbol The ID of the symbol currently being drawn.
-     * 
      * @returns {string} The tooltip text.
      */
     getText(sRow, sCol, eRow, eCol, board, drawSymbol) {
@@ -295,7 +270,7 @@ class DrawCounter {
             }
 
             col = Math.max(eCol, sCol) + 1;
-            while (col < this.cols && board[row][col] === drawSymbol) {
+            while (col < this.puzzle.cols && board[row][col] === drawSymbol) {
                 totalCount += 1;
                 col += 1;
             }
@@ -324,7 +299,7 @@ class DrawCounter {
             }
 
             row = Math.max(eRow, sRow) + 1;
-            while (row < this.cols && board[row][col] === drawSymbol) {
+            while (row < this.puzzle.cols && board[row][col] === drawSymbol) {
                 totalCount += 1;
                 row += 1;
             }
@@ -344,4 +319,4 @@ class DrawCounter {
     }
 }
 
-export default DrawCounter;
+export default DrawCountManager;

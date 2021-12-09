@@ -1,5 +1,5 @@
 import React from "react";
-import nonogram from "../control/nonogram";
+import Nonogram from "../control/NonogramManager";
 import { getCellId, getClueFontSize } from "../utils";
 import {
     COLOR_CELL_BORDER,
@@ -95,7 +95,7 @@ const getBorderWidth = (rows, cols, row, col) => {
 
 const toggleClue = (e, row, col) => {
     if (e.buttons === MOUSE_PRIMARY_BTN || e.buttons === MOUSE_SECONDARY_BTN) {
-        nonogram.toggleTopClue(row, col);
+        Nonogram.clueMgr.toggleTopClue(row, col);
     }
 }
 

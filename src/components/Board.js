@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import Grid from "./Grid";
 import TopPanel from "./TopPanel";
 import LeftPanel from "./LeftPanel";
-import nonogram from "../control/nonogram";
+import Nonogram from "../control/NonogramManager";
 import { adjustCellSize } from "../redux/actions/board";
 import { ELEM_ID_DRAW_TOOLTIP, MOUSE_MID_BTN } from "../constants";
 import RulerTooltip from "./RulerTooltip";
@@ -42,7 +42,7 @@ class Board extends React.Component {
 
     componentDidMount() {
         this.boardElem = document.getElementById("board");
-        nonogram.initialize();
+        Nonogram.initialize();
     }
 
     handleMouseDown = (e) => {

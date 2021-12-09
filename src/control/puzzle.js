@@ -1,4 +1,5 @@
 import { SYMBOL_ID_EMPTY } from "../constants";
+import { getCellId, getCellRowCol } from "../utils";
 
 class Puzzle {
     /**
@@ -88,6 +89,26 @@ class Puzzle {
             }
         }
     }
+
+    /**
+     * Returns the cell id.
+     * 
+     * @param {number} row The row index of the cell.
+     * @param {number} col The column index of the cell.
+     * @returns {number} The cell id.
+     */
+    getCellId(row, col) {
+        return getCellId(this.cols, row, col);        
+    }
+
+    /**
+     * Returns the row and column indices of the given cell id.
+     * @param {number} cellId The cell id.
+     * @returns {number[]} The row and column indices of the given cell id.
+     */
+    getCellRowCol(cellId) {
+        return getCellRowCol(cellId, this.cols);
+    }
 }
 
 /**
@@ -124,7 +145,6 @@ const getLeftClueCols = (data) => {
  * @param {number[][]} data The data of the clues at the top panel.
  * @param {number} rows The number of rows of the top panel.
  * @param {number} cols The number of columns of the top panel.
- * 
  * @returns {number[][]} The top clue data as a 2-dimensional array.
  */
 const getTopClueData = (data, rows, cols) => {
@@ -157,7 +177,6 @@ const getTopClueData = (data, rows, cols) => {
  * @param {number[][]} data The data of the clues at the left panel.
  * @param {number} rows The number of rows of the left panel.
  * @param {number} cols The number of columns of the left panel.
- * 
  * @returns {number[][]} The left clue data as a 2-dimensional array.
  */
 const getLeftClueData = (data, rows, cols) => {
