@@ -13,52 +13,125 @@ const SYMBOL_CLASSNAMES = {
 };
 
 
+/**
+ * Class responsible for the drawing process.
+ */
 export default class DrawManager {
 
+    /**
+     * The puzzle object.
+     * @type {Puzzle}
+     */
     puzzle = null;
 
+    /**
+     * The DrawCountManager.
+     * @type {DrawCountManager}
+     */
     countMgr = null;
 
-    cellElemsDict = {};
+    /**
+     * Dictionary containing the DOM elements of the cells.
+     * @type {Object<string, HTMLElement>}
+     */
+    elemsDict = {};
 
+    /**
+     * True if currently drawing a line. False otherwise.
+     * @type {boolean}
+     */
     isDrawing = false;
 
+    /**
+     * The current drawing direction.
+     * @type {DrawingDirEnum}
+     */
     drawingDir = DrawingDirEnum.NONE;
 
+    /**
+     * The symbol currently being drawn.
+     * @type {DrawingSymbolEnum}
+     */
     drawSymbol = DrawingSymbolEnum.FILL;
 
+    /**
+     * The selected symbol to be drawn when the user starts drawing.
+     * @type {DrawingSymbolEnum}
+     */
+    selectedSymbol = DrawingSymbolEnum.FILL;
+
+    /**
+     * The set containing the DOM elements of the cells that are currently being drawn on.
+     * @type {Set<HTMLElement>}
+     */
     drawCells = new Set();
 
+    /**
+     * The row index of the cell where the drawn line starts from.
+     * @type {number}
+     */
     sRow = null;
 
+    /**
+     * The column index of the cell where the drawn line starts from.
+     * @type {number}
+     */
     sCol = null;
 
+    /**
+     * The row index of the cell where the drawn line ends on.
+     * @type {number}
+     */
     eRow = null;
 
+    /**
+     * The column index of the cell where the drawn line ends on.
+     * @type {number}
+     */
     eCol = null;
 
+    /**
+     * Constructor.
+     * @param {Puzzle} puzzle The puzzle object.
+     */
     constructor(puzzle) {
         this.puzzle = puzzle;
         this.countMgr = new DrawCountManager(puzzle);
     }
 
+    /**
+     * Initialize the elements.
+     * Should be called once the DOM elements have been loaded.
+     */
     initialize() {
         this.countMgr.initialize();
 
-        this.cellElemsDict = {};
+        this.elemsDict = {};
         for (let rowIdx = 0; rowIdx < this.puzzle.rows; rowIdx++) {
             for (let colIdx = 0; colIdx < this.puzzle.rows; colIdx++) {
                 const cellId = this.puzzle.getCellId(rowIdx, colIdx);
-                this.cellElemsDict[cellId] = document.getElementById(`cell-${cellId}`);
+                this.elemsDict[cellId] = document.getElementById(`cell-${cellId}`);
             }
         }
     }
 
+    /**
+     * Get the DOM element of the cell.
+     * @param {number} row The row index of the cell.
+     * @param {number} col The column index of the cell.
+     * @returns {HTMLElement} The DOM element of the cell.
+     */
     getCellElement(row, col) {
         const cellId = this.puzzle.getCellId(row, col);
-        return this.cellElemsDict[cellId];
+        return this.elemsDict[cellId];
     }
 
+    /**
+     * Start drawing.
+     * @param {number} sRow The row index of the cell where the drawing starts from.
+     * @param {number} sCol The column index of the cell where the drawing starts from.
+     * @param {DrawingSymbolEnum} drawSymbol The symbol being drawn.
+     */
     start(sRow, sCol, drawSymbol) {
         this.sRow = sRow;
         this.sCol = sCol;
@@ -85,9 +158,14 @@ export default class DrawManager {
             this.drawSymbol = drawSymbol;
         }
 
-        this.renderCells(newDrawCells);
+        this.renderDrawing(newDrawCells);
     }
 
+    /**
+     * Update the drawing when the cursor moves over another cell.
+     * @param {number} currRow The row index of the cell where the cursor is currently on.
+     * @param {number} currCol The column index of the cell where the cursor is currently on.
+     */
     move(currRow, currCol) {
         const [newDrawCells, newEndRow, newEndCol, dir] = this.getDrawnCells(currRow, currCol);
         this.eRow = newEndRow;
@@ -101,9 +179,12 @@ export default class DrawManager {
                 newEndRow, newEndCol, this.puzzle.board, this.drawSymbol, sCell, eCell);
         }
 
-        this.renderCells(newDrawCells);
+        this.renderDrawing(newDrawCells);
     }
 
+    /**
+     * Finalize the drawing.
+     */
     end() {
         this.isDrawing = false;
         this.drawingDir = DrawingDirEnum.NONE;
@@ -114,17 +195,24 @@ export default class DrawManager {
         });
 
         this.countMgr.hide();
-        this.renderCells();
+        this.renderDrawing();
     }
 
+    /**
+     * Cancel the drawing.
+     */
     cancel() {
         this.isDrawing = false;
         this.drawingDir = DrawingDirEnum.NONE;
         this.countMgr.hide();
-        this.renderCells();
+        this.renderDrawing();
     }
 
-    renderCells(newDrawCells = null) {
+    /**
+     * Render the drawing.
+     * @param {Set<number>} newDrawCells The set containing the IDs of the cells being drawn on.
+     */
+    renderDrawing(newDrawCells = null) {
         this.drawCells.forEach(cellId => {
             const [row, col] = this.puzzle.getCellRowCol(cellId);
             const cellSymbol = this.puzzle.board[row][col];
@@ -146,8 +234,14 @@ export default class DrawManager {
         }
     }
 
+    /**
+     * Render a specific cell.
+     * @param {number} cellId The cell id.
+     * @param {DrawingSymbolEnum} symbolId The symbol to render on the cell.
+     * @param {boolean} isDrawing True if the cell is being drawn on. False otherwise.
+     */
     renderCell(cellId, symbolId, isDrawing) {
-        const elem = this.cellElemsDict[cellId];
+        const elem = this.elemsDict[cellId];
         if (elem !== undefined && elem !== null) {
             elem.className = CLASSNAME_CELL_CONTENT;
 
@@ -165,6 +259,18 @@ export default class DrawManager {
         }
     }
 
+    /**
+     * Calculate and return an array containing the following:
+     * 
+     * - The set containing the IDs of the cells being drawn on.
+     * - The row index of the cell where the drawing ends.
+     * - The column index of the cell where the drawing ends.
+     * - The drawing direction.
+     * 
+     * @param {number} currRow The row index of the cell where the cursor is currently on.
+     * @param {number} currCol The column index of the cell where the cursor is currently on.
+     * @returns {Array} The array of items as described above.
+     */
     getDrawnCells(currRow, currCol) {
         const sRow = this.sRow;
         const sCol = this.sCol;

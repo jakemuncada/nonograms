@@ -9,10 +9,12 @@ import {
 } from "../common/constants";
 
 
+/** Class responsible for displaying the drawing count tooltip. */
 class DrawCountManager {
 
     /**
      * The puzzle object.
+     * @type {Puzzle}
      */
     puzzle = null;
 
@@ -30,7 +32,6 @@ class DrawCountManager {
 
     /**
      * Constructor for a DrawCounter.
-     * 
      * @param {object} puzzle The puzzle object.
      */
     constructor(puzzle) {
@@ -38,7 +39,8 @@ class DrawCountManager {
     }
 
     /**
-     * Initialize the DOM elements.
+     * Initialize the elements.
+     * Should be called once the DOM elements have been loaded.
      */
     initialize() {
         this.mainElem = document.getElementById(ELEM_ID_DRAW_TOOLTIP);
@@ -57,7 +59,6 @@ class DrawCountManager {
 
     /**
      * Updates and displays the draw counter's visibility and position.
-     * 
      * @param {!number} sRow The row of the cell from where the drawn line starts.
      * @param {!number} sCol The column of the cell from where the drawn line starts.
      * @param {!number} eRow The row of the cell where the drawn line ends.
@@ -110,8 +111,7 @@ class DrawCountManager {
     }
 
     /**
-     * Gets the x and y coordinates of the tooltip based on the drawn line.
-     * 
+     * Gets the screen coordinates of the tooltip based on the drawn line.
      * @param {number} sRow The row of the cell from where the drawn line starts.
      * @param {number} sCol The column of the cell from where the drawn line starts.
      * @param {number} eRow The row of the cell where the drawn line ends.
@@ -176,7 +176,6 @@ class DrawCountManager {
 
     /**
      * Gets the x and y coordinates of the midpoint between the two elements' bounding rects.
-     * 
      * @param {object} rect1 The first DOM element's bounding rect.
      * @param {object} rect2 The second DOM element's bounding rect.
      * @returns {Array<number>} An array containing the x and y coordinates
@@ -220,7 +219,6 @@ class DrawCountManager {
 
     /**
      * Sets the tooltip width.
-     * 
      * @param {number} width The new width of the tooltip.
      */
     setTooltipWidth(width) {
@@ -231,7 +229,6 @@ class DrawCountManager {
 
     /**
      * Sets the draw counter text.
-     * 
      * @param {string} text The new tooltip text.
      */
     setText(text) {
@@ -242,7 +239,6 @@ class DrawCountManager {
 
     /**
      * Gets the tooltip text based on the drawn line.
-     * 
      * @param {number} sRow The row of the cell from where the drawn line starts.
      * @param {number} sCol The column of the cell from where the drawn line starts.
      * @param {number} eRow The row of the cell where the drawn line ends.

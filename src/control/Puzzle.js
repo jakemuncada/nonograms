@@ -2,6 +2,7 @@ import { DrawingSymbolEnum } from "../common/enums";
 import { getCellId, getCellRowCol } from "../common/utils";
 
 
+/** Class containing the puzzle information. */
 class Puzzle {
     /**
      * The number of rows of the board.

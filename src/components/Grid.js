@@ -17,7 +17,7 @@ class Grid extends React.Component {
         }
         else {
             if (e.button === MouseButtonEnum.LEFT) {
-                drawSymbol = Nonogram.selectedSymbol;
+                drawSymbol = Nonogram.drawMgr.selectedSymbol;
             }
             else if (e.button === MouseButtonEnum.RIGHT) {
                 drawSymbol = DrawingSymbolEnum.X;
