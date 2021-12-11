@@ -228,19 +228,6 @@ export default class ClueManager {
         } catch (e) {
             console.error("Failed to toggle clue in the top panel,", e);
         }
-
-        // if (this.puzzle.leftClueData) {
-        //     if (rowIdx >= 0 && rowIdx < this.puzzle.leftClueData.length) {
-        //         if (colIdx >= 0 && colIdx < this.puzzle.leftClueData[rowIdx].length) {
-        //             if (this.puzzle.leftClueData[rowIdx][colIdx]) {
-        //                 const idNum = getCellId(this.puzzle.leftClueCols, rowIdx, colIdx);
-        //                 const elemId = `left-clue-overlay-${idNum}`;
-        //                 const elem = this.elemsDict[elemId];
-        //                 elem.classList.toggle(CLASSNAME_CLUE_SLASH);
-        //             }
-        //         }
-        //     }
-        // }
     }
 
     /**
@@ -303,6 +290,7 @@ export default class ClueManager {
 /**
  * Toggles a clue status and returns the new toggled status.
  * @param {ClueStatusEnum} oldStatus The old status.
+ * @returns {ClueStatusEnum} The new status.
  */
 const getToggledStatus = (oldStatus) => {
     switch (oldStatus) {
