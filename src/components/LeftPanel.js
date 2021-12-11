@@ -2,7 +2,7 @@ import React from "react";
 import Nonogram from "../control/NonogramManager";
 import Colors from "../common/colors";
 import { getCellId, getClueFontSize } from "../common/utils";
-import { MouseButtonsEnum } from "../common/enums";
+import { MouseButtonEnum, ClueTypeEnum } from "../common/enums";
 
 
 function LeftPanel(props) {
@@ -49,8 +49,8 @@ function LeftPanel(props) {
                     key={key}
                     className="cell clue-cell"
                     style={tdStyle}
-                    onMouseDown={(e) => toggleClue(e, row, col)}
-                    onMouseEnter={(e) => toggleClue(e, row, col)}>
+                    onMouseDown={(e) => startToggling(e, row, col)}
+                    onMouseEnter={() => continueToggling(row, col)}>
                     <b>{num}</b>
                     <div id={overlayId} className={overlayClassName} style={overlayStyle} />
                 </td>
@@ -62,10 +62,21 @@ function LeftPanel(props) {
     return <table id="left-table"><tbody>{tableRows}</tbody></table>;
 }
 
-const toggleClue = (e, row, col) => {
-    if (e.buttons === MouseButtonsEnum.LEFT || e.buttons === MouseButtonsEnum.RIGHT) {
-        Nonogram.clueMgr.toggleLeftClue(row, col);
+const startToggling = (e, row, col) => {
+    if (e.button === MouseButtonEnum.LEFT || e.button === MouseButtonEnum.RIGHT) {
+        Nonogram.clueMgr.startToggling(ClueTypeEnum.LEFT, row, col);
     }
+    document.addEventListener("mouseup", stopToggling);
+}
+
+const continueToggling = (row, col) => {
+    if (Nonogram.clueMgr.togglingClueType === ClueTypeEnum.LEFT) {
+        Nonogram.clueMgr.continueToggling(ClueTypeEnum.LEFT, row, col);
+    }
+}
+
+const stopToggling = () => {
+    Nonogram.clueMgr.stopToggling();
 }
 
 const getBorderWidth = (rows, cols, row, col) => {

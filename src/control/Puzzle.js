@@ -1,4 +1,4 @@
-import { DrawingSymbolEnum } from "../common/enums";
+import { ClueStatusEnum, DrawingSymbolEnum } from "../common/enums";
 import { getCellId, getCellRowCol } from "../common/utils";
 
 
@@ -29,10 +29,28 @@ class Puzzle {
     topClueRows = null;
 
     /**
+     * The number of columns of the top panel clues.
+     * @type {number}
+     */
+    topClueCols = null;
+
+    /**
      * The processed data of the top panel clues.
      * @type {number[][]}
      */
     topClueData = null;
+
+    /**
+     * The status of each clue in the top panel.
+     * @type {ClueStatusEnum[][]}
+     */
+    topClueState = null;
+
+    /**
+     * The number of rows of the left panel clues.
+     * @type {number}
+     */
+    leftClueRows = null;
 
     /**
      * The number of columns of the left panel clues.
@@ -45,6 +63,12 @@ class Puzzle {
      * @type {number[][]}
      */
     leftClueData = null;
+
+    /**
+     * The status of each clue int the left panel.
+     * @type {ClueStatusEnum[][]}
+     */
+    leftClueState = null;
 
     /**
      * Constructor for a Puzzle.
@@ -78,10 +102,15 @@ class Puzzle {
             throw new RangeError(`Invalid puzzle row and column: ${this.rows}, ${this.cols}`);
         }
 
+        this.topClueCols = this.cols;
         this.topClueRows = getTopClueRows(puzzleData.top);
         this.topClueData = getTopClueData(puzzleData.top, this.topClueRows, this.cols);
+        this.topClueState = getClueState(this.topClueData);
+
+        this.leftClueRows = this.rows;
         this.leftClueCols = getLeftClueCols(puzzleData.left);
         this.leftClueData = getLeftClueData(puzzleData.left, this.rows, this.leftClueCols);
+        this.leftClueState = getClueState(this.leftClueData);
 
         this.board = new Array(this.rows);
         for (let rowIdx = 0; rowIdx < this.rows; rowIdx++) {
@@ -203,6 +232,24 @@ const getLeftClueData = (data, rows, cols) => {
     }
 
     return clueData;
+}
+
+const getClueState = (data) => {
+    if (data === null) {
+        return null;
+    }
+
+    const state = new Array(data.length);
+    for (let rowIdx = 0; rowIdx < data.length; rowIdx++) {
+        state[rowIdx] = new Array(data[rowIdx].length);
+        for (let colIdx = 0; colIdx < data[rowIdx].length; colIdx++) {
+            const status = (data[rowIdx][colIdx] !== null) ?
+                ClueStatusEnum.UNFINISHED : ClueStatusEnum.BLANK;
+            state[rowIdx][colIdx] = status;
+        }
+    }
+
+    return state;
 }
 
 export default new Puzzle();

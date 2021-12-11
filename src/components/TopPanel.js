@@ -2,10 +2,10 @@ import React from "react";
 import Nonogram from "../control/NonogramManager";
 import Colors from "../common/colors";
 import { getCellId, getClueFontSize } from "../common/utils";
-import { MouseButtonsEnum } from "../common/enums";
+import { ClueTypeEnum, MouseButtonEnum } from "../common/enums";
 
 
-function TopPanel(props) {
+export default function TopPanel(props) {
     const { rows, cols, data, cellSize } = props;
 
     if (data === null || data.length <= 0) {
@@ -49,8 +49,8 @@ function TopPanel(props) {
                     key={key}
                     className="cell clue-cell"
                     style={tdStyle}
-                    onMouseDown={(e) => toggleClue(e, row, col)}
-                    onMouseEnter={(e) => toggleClue(e, row, col)}>
+                    onMouseDown={(e) => startToggling(e, row, col)}
+                    onMouseEnter={() => continueToggling(row, col)}>
                     <b>{num}</b>
                     <div id={overlayId} className={overlayClassName} style={overlayStyle} />
                 </td>
@@ -62,6 +62,22 @@ function TopPanel(props) {
     return <table id="top-table"><tbody>{tableRows}</tbody></table>;
 }
 
+const startToggling = (e, row, col) => {
+    if (e.button === MouseButtonEnum.LEFT || e.button === MouseButtonEnum.RIGHT) {
+        Nonogram.clueMgr.startToggling(ClueTypeEnum.TOP, row, col);
+    }
+    document.addEventListener("mouseup", stopToggling);
+}
+
+const continueToggling = (row, col) => {
+    if (Nonogram.clueMgr.togglingClueType === ClueTypeEnum.TOP) {
+        Nonogram.clueMgr.continueToggling(ClueTypeEnum.TOP, row, col);
+    }
+}
+
+const stopToggling = () => {
+    Nonogram.clueMgr.stopToggling();
+}
 
 const getBorderWidth = (rows, cols, row, col) => {
     let topBdr = 1;
@@ -91,11 +107,3 @@ const getBorderWidth = (rows, cols, row, col) => {
 
     return `${topBdr}px ${rightBdr}px ${botBdr}px ${leftBdr}px`;
 }
-
-const toggleClue = (e, row, col) => {
-    if (e.buttons === MouseButtonsEnum.LEFT || e.buttons === MouseButtonsEnum.RIGHT) {
-        Nonogram.clueMgr.toggleTopClue(row, col);
-    }
-}
-
-export default TopPanel;
