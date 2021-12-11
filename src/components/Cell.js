@@ -1,5 +1,5 @@
 import React from "react";
-import { COLOR_CELL_BORDER } from "../constants";
+import Colors from "../common/colors";
 
 function Cell(props) {
     const {
@@ -10,7 +10,7 @@ function Cell(props) {
     const tdStyle = {
         width: cellSize,
         height: cellSize,
-        borderColor: COLOR_CELL_BORDER,
+        borderColor: Colors.CELL_BORDER,
         borderStyle: "solid",
         borderWidth: getBorderWidth(rows, cols, row, col)
     };

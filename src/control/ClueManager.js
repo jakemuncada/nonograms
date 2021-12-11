@@ -1,5 +1,6 @@
-import { CLASSNAME_CLUE_SLASH } from "../constants";
-import { getCellId } from "../utils";
+import { CLASSNAME_CLUE_SLASH } from "../common/constants";
+import { getCellId } from "../common/utils";
+
 
 export default class ClueManager {
 

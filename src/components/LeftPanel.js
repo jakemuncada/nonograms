@@ -1,11 +1,9 @@
 import React from "react";
 import Nonogram from "../control/NonogramManager";
-import { getCellId, getClueFontSize } from "../utils";
-import {
-    COLOR_CELL_BORDER,
-    MOUSE_PRIMARY_BTN,
-    MOUSE_SECONDARY_BTN
-} from "../constants";
+import Colors from "../common/colors";
+import { getCellId, getClueFontSize } from "../common/utils";
+import { MouseButtonsEnum } from "../common/enums";
+
 
 function LeftPanel(props) {
     const { rows, cols, data, cellSize } = props;
@@ -31,7 +29,7 @@ function LeftPanel(props) {
             const tdStyle = {
                 width: cellSize,
                 height: cellSize,
-                borderColor: COLOR_CELL_BORDER,
+                borderColor: Colors.CELL_BORDER,
                 borderStyle: "solid",
                 borderWidth: getBorderWidth(rows, cols, row, col),
                 fontSize: `${getClueFontSize(cellSize)}pt`,
@@ -65,7 +63,7 @@ function LeftPanel(props) {
 }
 
 const toggleClue = (e, row, col) => {
-    if (e.buttons === MOUSE_PRIMARY_BTN || e.buttons === MOUSE_SECONDARY_BTN) {
+    if (e.buttons === MouseButtonsEnum.LEFT || e.buttons === MouseButtonsEnum.RIGHT) {
         Nonogram.clueMgr.toggleLeftClue(row, col);
     }
 }

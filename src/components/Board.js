@@ -3,10 +3,11 @@ import { connect } from "react-redux";
 import Grid from "./Grid";
 import TopPanel from "./TopPanel";
 import LeftPanel from "./LeftPanel";
-import Nonogram from "../control/NonogramManager";
-import { adjustCellSize } from "../redux/actions/board";
-import { ELEM_ID_DRAW_TOOLTIP, MOUSE_MID_BTN } from "../constants";
 import RulerTooltip from "./RulerTooltip";
+import Nonogram from "../control/NonogramManager";
+import { MouseButtonEnum } from "../common/enums";
+import { adjustCellSize } from "../redux/actions/board";
+import { ELEM_ID_DRAW_TOOLTIP } from "../common/constants";
 
 const mapStateToProps = (state) => {
     return {
@@ -46,7 +47,7 @@ class Board extends React.Component {
     }
 
     handleMouseDown = (e) => {
-        if (e.button === MOUSE_MID_BTN) {
+        if (e.button === MouseButtonEnum.MID) {
             e.preventDefault();
             this.isPanning = true;
             this.panOrigX = e.screenX;
@@ -71,7 +72,7 @@ class Board extends React.Component {
     }
 
     handleMouseUp = (e) => {
-        if (e.button === MOUSE_MID_BTN) {
+        if (e.button === MouseButtonEnum.MID) {
             this.isPanning = false;
             this.panOrigX = null;
             this.panOrigY = null;
@@ -101,7 +102,7 @@ class Board extends React.Component {
     preventDefault = (e) => {
         e = e || window.event;
         if (e.preventDefault) {
-          e.preventDefault();
+            e.preventDefault();
         }
         e.returnValue = false;
     }
@@ -137,7 +138,7 @@ class Board extends React.Component {
                             <Grid rows={rows} cols={cols} cellSize={cellSize} />
                         </div>
                         <div id="left-container">
-                            <LeftPanel 
+                            <LeftPanel
                                 rows={rows} cols={leftClueCols}
                                 cellSize={cellSize}
                                 data={leftClueData} />

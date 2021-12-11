@@ -1,3 +1,4 @@
+import { DrawingSymbolEnum } from "../common/enums";
 import {
     CLASSNAME_TRANSITION,
     CLASSNAME_VISIBLE,
@@ -5,11 +6,11 @@ import {
     RULER_TOOLTIP_HALF_HEIGHT,
     RULER_TOOLTIP_HALF_WIDTH,
     RULER_TOOLTIP_HEIGHT,
-    SYMBOL_ID_EMPTY
-} from "../constants";
+} from "../common/constants";
+
 
 class DrawCountManager {
-    
+
     /**
      * The puzzle object.
      */
@@ -99,7 +100,7 @@ class DrawCountManager {
         // so that it will initially be displayed at the correct position.
         if (!this.mainElem.classList.contains(CLASSNAME_VISIBLE)) {
             this.mainElem.classList.remove(CLASSNAME_TRANSITION);
-            this.mainElem.classList.add(CLASSNAME_VISIBLE);         
+            this.mainElem.classList.add(CLASSNAME_VISIBLE);
         }
         // If the tooltip is already visible, add its transition animation
         // so that it will smoothly animate to the correct position.
@@ -259,7 +260,7 @@ class DrawCountManager {
             actualCount = Math.abs(eCol - sCol) + 1;
             totalCount = actualCount;
 
-            if (drawSymbol === SYMBOL_ID_EMPTY) {
+            if (drawSymbol === DrawingSymbolEnum.EMPTY) {
                 return actualCount;
             }
 
@@ -288,7 +289,7 @@ class DrawCountManager {
             actualCount = Math.abs(eRow - sRow) + 1;
             totalCount = actualCount;
 
-            if (drawSymbol === SYMBOL_ID_EMPTY) {
+            if (drawSymbol === DrawingSymbolEnum.EMPTY) {
                 return actualCount;
             }
 

@@ -1,14 +1,8 @@
 import React from "react";
 import Cell from "./Cell";
 import Nonogram from "../control/NonogramManager";
-import { getCellId } from "../utils";
-
-import {
-    MOUSE_LEFT_BTN,
-    MOUSE_RIGHT_BTN,
-    SYMBOL_ID_X
-} from "../constants";
-
+import { getCellId } from "../common/utils";
+import { MouseButtonEnum, DrawingSymbolEnum } from "../common/enums";
 import "./Board.css";
 
 
@@ -22,11 +16,11 @@ class Grid extends React.Component {
             Nonogram.drawMgr.cancel();
         }
         else {
-            if (e.button === MOUSE_LEFT_BTN) {
+            if (e.button === MouseButtonEnum.LEFT) {
                 drawSymbol = Nonogram.selectedSymbol;
             }
-            else if (e.button === MOUSE_RIGHT_BTN) {
-                drawSymbol = SYMBOL_ID_X;
+            else if (e.button === MouseButtonEnum.RIGHT) {
+                drawSymbol = DrawingSymbolEnum.X;
             }
 
             if (drawSymbol !== null) {

@@ -1,6 +1,6 @@
 import {
     CELL_SIZE_MIN,
-} from "../../constants";
+} from "../../common/constants";
 
 import {
     ADJUST_CELL_SIZE,

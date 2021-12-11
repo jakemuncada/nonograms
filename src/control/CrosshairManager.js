@@ -1,4 +1,5 @@
-import { CLASSNAME_CROSSHAIR_ACTIVE } from "../constants";
+import { CLASSNAME_CROSSHAIR_ACTIVE } from "../common/constants";
+
 
 export default class CrosshairManager {
 

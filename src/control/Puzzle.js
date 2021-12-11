@@ -1,5 +1,6 @@
-import { SYMBOL_ID_EMPTY } from "../constants";
-import { getCellId, getCellRowCol } from "../utils";
+import { DrawingSymbolEnum } from "../common/enums";
+import { getCellId, getCellRowCol } from "../common/utils";
+
 
 class Puzzle {
     /**
@@ -85,7 +86,7 @@ class Puzzle {
         for (let rowIdx = 0; rowIdx < this.rows; rowIdx++) {
             this.board[rowIdx] = new Array(this.cols);
             for (let colIdx = 0; colIdx < this.cols; colIdx++) {
-                this.board[rowIdx][colIdx] = SYMBOL_ID_EMPTY;
+                this.board[rowIdx][colIdx] = DrawingSymbolEnum.EMPTY;
             }
         }
     }

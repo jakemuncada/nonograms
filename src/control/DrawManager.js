@@ -1,20 +1,17 @@
+import DrawCountManager from "./DrawCountManager";
+import { DrawingDirEnum, DrawingSymbolEnum } from "../common/enums";
 import {
     CLASSNAME_CELL_CONTENT,
     CLASSNAME_CELL_DRAWING,
-    DRAWING_DIR_HORIZONTAL,
-    DRAWING_DIR_POINT,
-    DRAWING_DIR_VERTICAL,
-    SYMBOL_ID_EMPTY,
-    SYMBOL_ID_FILL,
-    SYMBOL_ID_X
-} from "../constants";
-import DrawCountManager from "./DrawCountManager";
+} from "../common/constants";
+
 
 const SYMBOL_CLASSNAMES = {
-    [SYMBOL_ID_EMPTY]: null,
-    [SYMBOL_ID_FILL]: "cell-fill",
-    [SYMBOL_ID_X]: "cell-x"
+    [DrawingSymbolEnum.EMPTY]: null,
+    [DrawingSymbolEnum.FILL]: "cell-fill",
+    [DrawingSymbolEnum.X]: "cell-x"
 };
+
 
 export default class DrawManager {
 
@@ -26,9 +23,9 @@ export default class DrawManager {
 
     isDrawing = false;
 
-    drawingDir = null;
+    drawingDir = DrawingDirEnum.NONE;
 
-    drawSymbol = SYMBOL_ID_FILL;
+    drawSymbol = DrawingSymbolEnum.FILL;
 
     drawCells = new Set();
 
@@ -68,7 +65,7 @@ export default class DrawManager {
         this.eRow = sRow;
         this.eCol = sCol;
         this.isDrawing = true;
-        this.drawingDir = DRAWING_DIR_POINT;
+        this.drawingDir = DrawingDirEnum.POINT;
 
         this.countMgr.hide();
 
@@ -78,11 +75,11 @@ export default class DrawManager {
 
         const cellSymbol = this.puzzle.board[sRow][sCol];
 
-        if (drawSymbol === SYMBOL_ID_EMPTY) {
-            this.drawSymbol = SYMBOL_ID_EMPTY;
+        if (drawSymbol === DrawingSymbolEnum.EMPTY) {
+            this.drawSymbol = DrawingSymbolEnum.EMPTY;
         }
         else if (drawSymbol === cellSymbol) {
-            this.drawSymbol = SYMBOL_ID_EMPTY;
+            this.drawSymbol = DrawingSymbolEnum.EMPTY;
         }
         else {
             this.drawSymbol = drawSymbol;
@@ -109,6 +106,7 @@ export default class DrawManager {
 
     end() {
         this.isDrawing = false;
+        this.drawingDir = DrawingDirEnum.NONE;
         // Finalize the drawn cells by reflecting the changes onto the actual board.
         this.drawCells.forEach(cellId => {
             const [row, col] = this.puzzle.getCellRowCol(cellId);
@@ -121,6 +119,7 @@ export default class DrawManager {
 
     cancel() {
         this.isDrawing = false;
+        this.drawingDir = DrawingDirEnum.NONE;
         this.countMgr.hide();
         this.renderCells();
     }
@@ -136,7 +135,7 @@ export default class DrawManager {
         this.drawCells.clear();
         if (newDrawCells !== null) {
             newDrawCells.forEach(cellId => {
-                if (this.drawSymbol === SYMBOL_ID_EMPTY) {
+                if (this.drawSymbol === DrawingSymbolEnum.EMPTY) {
                     const [row, col] = this.puzzle.getCellRowCol(cellId);
                     symbolId = this.puzzle.board[row][col];
                 } else {
@@ -174,7 +173,7 @@ export default class DrawManager {
         drawCells.add(this.puzzle.getCellId(sRow, sCol));
 
         if (currRow === sRow && currCol === sCol) {
-            return [drawCells, sRow, sCol, DRAWING_DIR_POINT];
+            return [drawCells, sRow, sCol, DrawingDirEnum.POINT];
         }
 
         const horiDelta = currCol - sCol;
@@ -187,7 +186,7 @@ export default class DrawManager {
 
         // Horizontal Draw
         if (isVerticalDraw === false) {
-            dir = DRAWING_DIR_HORIZONTAL;
+            dir = DrawingDirEnum.HORIZONTAL;
             let col = Math.min(sCol, currCol);
             let end = Math.max(sCol, currCol);
             newDrawEndCol = currCol;
@@ -200,7 +199,7 @@ export default class DrawManager {
         }
         // Vertical Draw
         else {
-            dir = DRAWING_DIR_VERTICAL;
+            dir = DrawingDirEnum.VERTICAL;
             let row = Math.min(sRow, currRow);
             let end = Math.max(sRow, currRow);
             newDrawEndRow = currRow;

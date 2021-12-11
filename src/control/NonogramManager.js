@@ -2,12 +2,12 @@ import Puzzle from "./Puzzle";
 import DrawManager from "./DrawManager";
 import ClueManager from "./ClueManager";
 import CrosshairManager from "./CrosshairManager";
+import { DrawingSymbolEnum } from "../common/enums";
 import {
     SVG_URL_CLUE_SLASH,
     SVG_URL_FILL,
     SVG_URL_X,
-    SYMBOL_ID_FILL
-} from "../constants";
+} from "../common/constants";
 
 
 class NonogramManager {
@@ -16,7 +16,7 @@ class NonogramManager {
     drawMgr = null;
     clueMgr = null;
     crosshairMgr = null;
-    selectedSymbol = SYMBOL_ID_FILL;
+    selectedSymbol = DrawingSymbolEnum.FILL;
     imageCache = {}
 
     constructor(puzzle) {

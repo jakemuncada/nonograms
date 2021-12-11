@@ -5,7 +5,8 @@ import {
     RULER_TOOLTIP_HALF_WIDTH,
     RULER_TOOLTIP_HEIGHT,
     RULER_TOOLTIP_WIDTH,
-} from "../constants";
+} from "../common/constants";
+
 
 function RulerTooltip({ id }) {
     const className = "tooltip ruler";
