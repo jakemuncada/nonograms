@@ -98,7 +98,7 @@ class Puzzle {
      * @returns {number} The cell id.
      */
     getCellId(row, col) {
-        return getCellId(this.cols, row, col);        
+        return getCellId(this.cols, row, col);
     }
 
     /**
