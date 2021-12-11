@@ -1,4 +1,4 @@
-import { 
+import {
     CLASSNAME_CELL_CONTENT,
     CLASSNAME_CELL_DRAWING,
     DRAWING_DIR_HORIZONTAL,
@@ -109,11 +109,18 @@ export default class DrawManager {
 
     end() {
         this.isDrawing = false;
+        // Finalize the drawn cells by reflecting the changes onto the actual board.
         this.drawCells.forEach(cellId => {
             const [row, col] = this.puzzle.getCellRowCol(cellId);
             this.puzzle.board[row][col] = this.drawSymbol;
         });
 
+        this.countMgr.hide();
+        this.renderCells();
+    }
+
+    cancel() {
+        this.isDrawing = false;
         this.countMgr.hide();
         this.renderCells();
     }
@@ -165,11 +172,11 @@ export default class DrawManager {
 
         let drawCells = new Set();
         drawCells.add(this.puzzle.getCellId(sRow, sCol));
-    
+
         if (currRow === sRow && currCol === sCol) {
             return [drawCells, sRow, sCol, DRAWING_DIR_POINT];
         }
-    
+
         const horiDelta = currCol - sCol;
         const vertDelta = currRow - sRow;
         const isVerticalDraw = Math.abs(vertDelta) > Math.abs(horiDelta);
@@ -177,7 +184,7 @@ export default class DrawManager {
         let dir;
         let newDrawEndRow = sRow;
         let newDrawEndCol = sCol;
-    
+
         // Horizontal Draw
         if (isVerticalDraw === false) {
             dir = DRAWING_DIR_HORIZONTAL;
@@ -203,7 +210,7 @@ export default class DrawManager {
                 row += 1;
             }
         }
-        
+
         return [drawCells, newDrawEndRow, newDrawEndCol, dir];
     }
 }

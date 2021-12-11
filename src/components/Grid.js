@@ -16,15 +16,22 @@ class Grid extends React.Component {
 
     handleMouseDownOnCell = (e, cellRow, cellCol) => {
         let drawSymbol = null;
-        if (e.button === MOUSE_LEFT_BTN) {
-            drawSymbol = Nonogram.selectedSymbol;
-        }
-        else if (e.button === MOUSE_RIGHT_BTN) {
-            drawSymbol = SYMBOL_ID_X;
-        }
 
-        if (drawSymbol !== null) {
-            Nonogram.drawMgr.start(cellRow, cellCol, drawSymbol);
+        // If the user presses another mouse button while drawing, cancel the current drawing.
+        if (Nonogram.drawMgr.isDrawing) {
+            Nonogram.drawMgr.cancel();
+        }
+        else {
+            if (e.button === MOUSE_LEFT_BTN) {
+                drawSymbol = Nonogram.selectedSymbol;
+            }
+            else if (e.button === MOUSE_RIGHT_BTN) {
+                drawSymbol = SYMBOL_ID_X;
+            }
+
+            if (drawSymbol !== null) {
+                Nonogram.drawMgr.start(cellRow, cellCol, drawSymbol);
+            }
         }
 
         document.addEventListener("mouseup", this.handleMouseUp);
