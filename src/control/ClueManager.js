@@ -1,6 +1,5 @@
 import { CLASSNAME_CLUE_SLASH } from "../common/constants";
 import { ClueStatusEnum, ClueTypeEnum } from "../common/enums";
-import { getCellId } from "../common/utils";
 
 
 /** Class responsible for handling the clues. */
@@ -13,10 +12,10 @@ export default class ClueManager {
     puzzle = null;
 
     /**
-     * The dictionary containing the DOM elements of the clues.
-     * @type {Object<string, HTMLElement>}
+     * The ElementManager containing the DOM elements.
+     * @type {ElementManager}
      */
-    elemsDict = {};
+    elemMgr = null;
 
     /**
      * True if toggling of clues is currently going on. False otherwise.
@@ -39,21 +38,11 @@ export default class ClueManager {
     /**
      * Constructor.
      * @param {Puzzle} puzzle The puzzle object.
+     * @param {ElementManager} elemMgr The ElementManager.
      */
-    constructor(puzzle) {
+    constructor(puzzle, elemMgr) {
         this.puzzle = puzzle;
-    }
-
-    /**
-     * Initialize the elements.
-     * Should be called once the DOM elements have been loaded.
-     */
-    initialize() {
-        this.elemsDict = {};
-        const clueOverlays = document.querySelectorAll(".clue.overlay");
-        clueOverlays.forEach(elem => {
-            this.elemsDict[elem.id] = elem;
-        });
+        this.elemMgr = elemMgr;
     }
 
     /**
@@ -64,7 +53,7 @@ export default class ClueManager {
      */
     startToggling(clueType, row, col) {
         try {
-            const { state } = this.getClueInfo(clueType);
+            const { state } = this.puzzle.getClueInfo(clueType);
             const currStatus = state[row][col];
 
             // If the user started toggling on a BLANK (no number) clue cell, do nothing.
@@ -148,7 +137,7 @@ export default class ClueManager {
      * @param {ClueStatusEnum} status The new clue status.
      */
     setClueStatus(clueType, row, col, status) {
-        const { rows, cols, state } = this.getClueInfo(clueType);
+        const { rows, cols, state } = this.puzzle.getClueInfo(clueType);
 
         if (row < 0 || row >= rows || col < 0 || col >= cols) {
             throw new Error(`Invalid row/column: ${row}, ${col}.`);
@@ -172,19 +161,9 @@ export default class ClueManager {
      * @param {number} col The column index of the clue.
      */
     renderClue(clueType, row, col) {
-        const { cols, state } = this.getClueInfo(clueType);
-        const idNum = getCellId(cols, row, col);
-
-        let prefix = "";
-        if (clueType === ClueTypeEnum.TOP) {
-            prefix = "top";
-        } else if (clueType === ClueTypeEnum.LEFT) {
-            prefix = "left";
-        }
-        const elemId = `${prefix}-clue-overlay-${idNum}`;
-        const elem = this.elemsDict[elemId];
-
+        const elem = this.elemMgr.getClueOverlay(clueType, row, col);
         if (elem !== null && elem !== undefined) {
+            const { state } = this.puzzle.getClueInfo(clueType);
             const currStatus = state[row][col];
             if (currStatus === ClueStatusEnum.FINISHED) {
                 elem.classList.add(CLASSNAME_CLUE_SLASH);
@@ -201,7 +180,7 @@ export default class ClueManager {
      */
     toggleTopClue(rowIdx, colIdx) {
         try {
-            const { state } = this.getClueInfo(ClueTypeEnum.TOP);
+            const { state } = this.puzzle.getClueInfo(ClueTypeEnum.TOP);
             const currStatus = state[rowIdx][colIdx];
             const newStatus = getToggledStatus(currStatus);
             if (currStatus !== newStatus) {
@@ -219,7 +198,7 @@ export default class ClueManager {
      */
     toggleLeftClue(rowIdx, colIdx) {
         try {
-            const { state } = this.getClueInfo(ClueTypeEnum.LEFT);
+            const { state } = this.puzzle.getClueInfo(ClueTypeEnum.LEFT);
             const currStatus = state[rowIdx][colIdx];
             const newStatus = getToggledStatus(currStatus);
             if (currStatus !== newStatus) {
@@ -227,61 +206,6 @@ export default class ClueManager {
             }
         } catch (e) {
             console.error("Failed to toggle clue in the top panel,", e);
-        }
-    }
-
-    /**
-     * Get the clue information based on the clue type.
-     * 
-     * - rows: The number of rows of the clue panel.
-     * - cols: The number of columns of the clue panel.
-     * - data: The clue data.
-     * - state: The clue state.
-     * 
-     * @param {ClueTypeEnum} clueType The clue type.
-     * @throws An error if something went wrong.
-     * @returns {{rows: number, cols: number, data: number[][], state: ClueStatusEnum[][]}}
-     */
-    getClueInfo(clueType) {
-        if (!this.puzzle) {
-            throw new ReferenceError("Puzzle does not exist.");
-        }
-
-        switch (clueType) {
-            case ClueTypeEnum.TOP:
-                if (!this.puzzle.topClueData) {
-                    throw new ReferenceError("Top clue data does not exist.")
-                }
-
-                if (!this.puzzle.topClueState) {
-                    throw new ReferenceError("Top clue state does not exist.")
-                }
-
-                return {
-                    rows: this.puzzle.topClueRows,
-                    cols: this.puzzle.topClueCols,
-                    data: this.puzzle.topClueData,
-                    state: this.puzzle.topClueState,
-                };
-
-            case ClueTypeEnum.LEFT:
-                if (!this.puzzle.leftClueData) {
-                    throw new ReferenceError("Left clue data does not exist.")
-                }
-
-                if (!this.puzzle.leftClueState) {
-                    throw new ReferenceError("Left clue state does not exist.")
-                }
-
-                return {
-                    rows: this.puzzle.leftClueRows,
-                    cols: this.puzzle.leftClueCols,
-                    data: this.puzzle.leftClueData,
-                    state: this.puzzle.leftClueState,
-                };
-
-            default:
-                throw new Error("Clue type is invalid:", clueType);
         }
     }
 }

@@ -25,16 +25,16 @@ export default class DrawManager {
     puzzle = null;
 
     /**
+     * The ElementManager containing the DOM elements.
+     * @type {ElementManager}
+     */
+    elemMgr = null;
+
+    /**
      * The DrawCountManager.
      * @type {DrawCountManager}
      */
     countMgr = null;
-
-    /**
-     * Dictionary containing the DOM elements of the cells.
-     * @type {Object<string, HTMLElement>}
-     */
-    elemsDict = {};
 
     /**
      * True if currently drawing a line. False otherwise.
@@ -93,37 +93,12 @@ export default class DrawManager {
     /**
      * Constructor.
      * @param {Puzzle} puzzle The puzzle object.
+     * @param {ElementManager} elemMgr The ElementManager.
      */
-    constructor(puzzle) {
+    constructor(puzzle, elemMgr) {
         this.puzzle = puzzle;
-        this.countMgr = new DrawCountManager(puzzle);
-    }
-
-    /**
-     * Initialize the elements.
-     * Should be called once the DOM elements have been loaded.
-     */
-    initialize() {
-        this.countMgr.initialize();
-
-        this.elemsDict = {};
-        for (let rowIdx = 0; rowIdx < this.puzzle.rows; rowIdx++) {
-            for (let colIdx = 0; colIdx < this.puzzle.rows; colIdx++) {
-                const cellId = this.puzzle.getCellId(rowIdx, colIdx);
-                this.elemsDict[cellId] = document.getElementById(`cell-${cellId}`);
-            }
-        }
-    }
-
-    /**
-     * Get the DOM element of the cell.
-     * @param {number} row The row index of the cell.
-     * @param {number} col The column index of the cell.
-     * @returns {HTMLElement} The DOM element of the cell.
-     */
-    getCellElement(row, col) {
-        const cellId = this.puzzle.getCellId(row, col);
-        return this.elemsDict[cellId];
+        this.elemMgr = elemMgr;
+        this.countMgr = new DrawCountManager(puzzle, elemMgr);
     }
 
     /**
@@ -173,8 +148,8 @@ export default class DrawManager {
         this.drawingDir = dir;
 
         if (newDrawCells.size > 1) {
-            const sCell = this.getCellElement(this.sRow, this.sCol);
-            const eCell = this.getCellElement(newEndRow, newEndCol);
+            const sCell = this.elemMgr.getCell(this.sRow, this.sCol);
+            const eCell = this.elemMgr.getCell(newEndRow, newEndCol);
             this.countMgr.update(this.sRow, this.sCol,
                 newEndRow, newEndCol, this.puzzle.board, this.drawSymbol, sCell, eCell);
         }
@@ -241,7 +216,7 @@ export default class DrawManager {
      * @param {boolean} isDrawing True if the cell is being drawn on. False otherwise.
      */
     renderCell(cellId, symbolId, isDrawing) {
-        const elem = this.elemsDict[cellId];
+        const elem = this.elemMgr.cells[cellId];
         if (elem !== undefined && elem !== null) {
             elem.className = CLASSNAME_CELL_CONTENT;
 

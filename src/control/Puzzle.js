@@ -1,5 +1,9 @@
-import { ClueStatusEnum, DrawingSymbolEnum } from "../common/enums";
 import { getCellId, getCellRowCol } from "../common/utils";
+import {
+    ClueStatusEnum,
+    ClueTypeEnum,
+    DrawingSymbolEnum
+} from "../common/enums";
 
 
 /** Class containing the puzzle information. */
@@ -139,6 +143,57 @@ class Puzzle {
      */
     getCellRowCol(cellId) {
         return getCellRowCol(cellId, this.cols);
+    }
+
+    /**
+     * Get the clue information based on the clue type.
+     * 
+     * - rows: The number of rows of the clue panel.
+     * - cols: The number of columns of the clue panel.
+     * - data: The clue data.
+     * - state: The clue state.
+     * 
+     * @param {ClueTypeEnum} clueType The clue type.
+     * @throws An error if something went wrong.
+     * @returns {{rows: number, cols: number, data: number[][], state: ClueStatusEnum[][]}}
+     */
+    getClueInfo(clueType) {
+        switch (clueType) {
+            case ClueTypeEnum.TOP:
+                if (!this.topClueData) {
+                    throw new ReferenceError("Top clue data does not exist.")
+                }
+
+                if (!this.topClueState) {
+                    throw new ReferenceError("Top clue state does not exist.")
+                }
+
+                return {
+                    rows: this.topClueRows,
+                    cols: this.topClueCols,
+                    data: this.topClueData,
+                    state: this.topClueState,
+                };
+
+            case ClueTypeEnum.LEFT:
+                if (!this.leftClueData) {
+                    throw new ReferenceError("Left clue data does not exist.")
+                }
+
+                if (!this.leftClueState) {
+                    throw new ReferenceError("Left clue state does not exist.")
+                }
+
+                return {
+                    rows: this.leftClueRows,
+                    cols: this.leftClueCols,
+                    data: this.leftClueData,
+                    state: this.leftClueState,
+                };
+
+            default:
+                throw new Error("Clue type is invalid:", clueType);
+        }
     }
 }
 

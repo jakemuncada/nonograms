@@ -11,10 +11,10 @@ export default class CrosshairManager {
     puzzle = null;
 
     /**
-     * The dictionary containing the DOM elements of each cell overlay.
-     * @type {Object<string, HTMLElement>}
+     * The ElementManager containing the DOM elements.
+     * @type {ElementManager}
      */
-    elemsDict = {};
+    elemMgr = null;
 
     /**
      * The set containing the DOM elements of the cells activated by the crosshair.
@@ -37,30 +37,11 @@ export default class CrosshairManager {
     /**
      * Constructor.
      * @param {Puzzle} puzzle The puzzle object.
+     * @param {ElementManager} elemMgr The ElementManager.
      */
-    constructor(puzzle) {
+    constructor(puzzle, elemMgr) {
         this.puzzle = puzzle;
-    }
-
-    /**
-     * Initialize the elements.
-     * Should be called once the DOM elements have been loaded.
-     */
-    initialize() {
-        this.elemsDict = {};
-        this.currCrosshairElems.clear();
-        for (let rowIdx = 0; rowIdx < this.puzzle.rows; rowIdx++) {
-            const key = `row-${rowIdx}`;
-            const query = `.overlay.${key}`;
-            const elems = document.querySelectorAll(query);
-            this.elemsDict[key] = elems;
-        }
-        for (let colIdx = 0; colIdx < this.puzzle.cols; colIdx++) {
-            const key = `col-${colIdx}`;
-            const query = `.overlay.${key}`;
-            const elems = document.querySelectorAll(query);
-            this.elemsDict[key] = elems;
-        }
+        this.elemMgr = elemMgr;
     }
 
     /**
@@ -115,37 +96,27 @@ export default class CrosshairManager {
 
         // If the given rowIdx is not null, draw the crosshair overlay on that row.
         if (rowIdx !== null) {
-            if (rowIdx < 0 || rowIdx >= this.puzzle.rows) {
-                console.error("Failed to render row crosshair, row is invalid:", rowIdx);
-            }
-            else {
-                const key1 = `row-${rowIdx}`;
-                if (this.elemsDict[key1]) {
-                    this.elemsDict[key1].forEach(elem => {
-                        elem.classList.add(CLASSNAME_CROSSHAIR_ACTIVE);
-                        this.currCrosshairElems.add(elem);
-                    });
-                } else {
-                    console.error(`Failed to set crosshair, element '${key1}' not found.`);
-                }
+            try {
+                const elems = this.elemMgr.getCellOverlaysAtRow(rowIdx);
+                elems.forEach(elem => {
+                    elem.classList.add(CLASSNAME_CROSSHAIR_ACTIVE);
+                    this.currCrosshairElems.add(elem);
+                });
+            } catch (e) {
+                console.error("Failed to set crosshair,", e);
             }
         }
 
         // If the given colIdx is not null, draw the crosshair overlay on that column.
         if (colIdx !== null) {
-            if (colIdx < 0 || colIdx >= this.puzzle.cols) {
-                console.error("Failed to render row crosshair, col is invalid:", colIdx);
-            }
-            else {
-                const key2 = `col-${colIdx}`;
-                if (this.elemsDict[key2]) {
-                    this.elemsDict[key2].forEach(elem => {
-                        elem.classList.add(CLASSNAME_CROSSHAIR_ACTIVE);
-                        this.currCrosshairElems.add(elem);
-                    });
-                } else {
-                    console.error(`Failed to set crosshair, element '${key2}' not found.`);
-                }
+            try {
+                const elems = this.elemMgr.getCellOverlaysAtCol(colIdx);
+                elems.forEach(elem => {
+                    elem.classList.add(CLASSNAME_CROSSHAIR_ACTIVE);
+                    this.currCrosshairElems.add(elem);
+                });
+            } catch (e) {
+                console.error("Failed to set crosshair,", e);
             }
         }
     }

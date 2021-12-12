@@ -10,6 +10,8 @@ export const RULER_TOOLTIP_OFFSET_Y = 10;
 
 // Element IDs
 export const ELEM_ID_DRAW_TOOLTIP = "draw-tooltip";
+export const ELEM_ID_RULER_VERTICAL = "ruler-v";
+export const ELEM_ID_RULER_HORIZONTAL = "ruler-h";
 
 // Classnames
 export const CLASSNAME_CELL_CONTENT = "cell-content";

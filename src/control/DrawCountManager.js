@@ -2,7 +2,6 @@ import { DrawingSymbolEnum } from "../common/enums";
 import {
     CLASSNAME_TRANSITION,
     CLASSNAME_VISIBLE,
-    ELEM_ID_DRAW_TOOLTIP,
     RULER_TOOLTIP_HALF_HEIGHT,
     RULER_TOOLTIP_HALF_WIDTH,
     RULER_TOOLTIP_HEIGHT,
@@ -18,42 +17,29 @@ class DrawCountManager {
      */
     puzzle = null;
 
-    /** 
-     * The DOM element of the tooltip.
-     * @type {object}
+    /**
+     * The ElementManager containing the DOM elements.
+     * @type {ElementManager}
      */
-    mainElem = null;
-
-    /** 
-     * The DOM element of the tooltip's text.
-     * @type {object}
-     */
-    textElem = null;
+    elemMgr = null;
 
     /**
-     * Constructor for a DrawCounter.
-     * @param {object} puzzle The puzzle object.
+     * Constructor.
+     * @param {Puzzle} puzzle The puzzle object.
+     * @param {ElementManager} elemMgr The ElementManager.
      */
-    constructor(puzzle) {
+    constructor(puzzle, elemMgr) {
         this.puzzle = puzzle;
-    }
-
-    /**
-     * Initialize the elements.
-     * Should be called once the DOM elements have been loaded.
-     */
-    initialize() {
-        this.mainElem = document.getElementById(ELEM_ID_DRAW_TOOLTIP);
-        this.textElem = document.getElementById(ELEM_ID_DRAW_TOOLTIP + "-text");
+        this.elemMgr = elemMgr;
     }
 
     /**
      * Hides the tooltip.
      */
     hide() {
-        if (this.mainElem) {
-            this.mainElem.classList.remove(CLASSNAME_TRANSITION);
-            this.mainElem.classList.remove(CLASSNAME_VISIBLE);
+        if (this.elemMgr.drawCountTooltipMain) {
+            this.elemMgr.drawCountTooltipMain.classList.remove(CLASSNAME_TRANSITION);
+            this.elemMgr.drawCountTooltipMain.classList.remove(CLASSNAME_VISIBLE);
         }
     }
 
@@ -65,18 +51,14 @@ class DrawCountManager {
      * @param {!number} eCol The column of the cell where the drawn line ends.
      * @param {!Array<Array<number>>} board The 2-dimensional array containing the symbol IDs of each cell.
      * @param {number} drawSymbol The ID of the symbol currently being drawn.
-     * @param {object} sCell The starting cell's DOM object.
-     * @param {object} eCell The ending cell's DOM object.
+     * @param {HTMLElement} sCell The starting cell's DOM object.
+     * @param {HTMLElement} eCell The ending cell's DOM object.
      */
     update(sRow, sCol, eRow, eCol, board, drawSymbol, sCell, eCell) {
-        if (this.mainElem === null || this.textElem === null) {
-            // If the elements are null, try to initialize it.
-            this.initialize();
-            // Then, if it still comes up null, the DOM hasn't loaded yet, which means something went wrong.
-            if (this.mainElem === null || this.textElem === null) {
-                console.error("Failed to update draw counter, elements have not been initialized.");
-                return;
-            }
+        if (this.elemMgr.drawCountTooltipMain === null ||
+            this.elemMgr.drawCountTooltipText === null) {
+            console.error("Failed to update draw counter, elements have not been initialized.");
+            return;
         }
 
         // If the start cell is equal to the end cell, do not display the draw counter.
@@ -88,7 +70,7 @@ class DrawCountManager {
         // Update the position.
         const [posX, posY] = this.getPosition(sRow, sCol, eRow, eCol, sCell, eCell);
         const transform = `translate(${posX}px, ${posY}px)`;
-        this.mainElem.style.transform = transform;
+        this.elemMgr.drawCountTooltipMain.style.transform = transform;
 
         // Update the text.
         const text = this.getText(sRow, sCol, eRow, eCol, board, drawSymbol);
@@ -99,14 +81,14 @@ class DrawCountManager {
 
         // If the tooltip is not yet visible, remove its transition animation
         // so that it will initially be displayed at the correct position.
-        if (!this.mainElem.classList.contains(CLASSNAME_VISIBLE)) {
-            this.mainElem.classList.remove(CLASSNAME_TRANSITION);
-            this.mainElem.classList.add(CLASSNAME_VISIBLE);
+        if (!this.elemMgr.drawCountTooltipMain.classList.contains(CLASSNAME_VISIBLE)) {
+            this.elemMgr.drawCountTooltipMain.classList.remove(CLASSNAME_TRANSITION);
+            this.elemMgr.drawCountTooltipMain.classList.add(CLASSNAME_VISIBLE);
         }
         // If the tooltip is already visible, add its transition animation
         // so that it will smoothly animate to the correct position.
         else {
-            this.mainElem.classList.add(CLASSNAME_TRANSITION);
+            this.elemMgr.drawCountTooltipMain.classList.add(CLASSNAME_TRANSITION);
         }
     }
 
@@ -222,8 +204,8 @@ class DrawCountManager {
      * @param {number} width The new width of the tooltip.
      */
     setTooltipWidth(width) {
-        if (this.mainElem) {
-            this.mainElem.style.width = `${width}px`;
+        if (this.elemMgr.drawCountTooltipMain) {
+            this.elemMgr.drawCountTooltipMain.style.width = `${width}px`;
         }
     }
 
@@ -232,8 +214,8 @@ class DrawCountManager {
      * @param {string} text The new tooltip text.
      */
     setText(text) {
-        if (this.textElem) {
-            this.textElem.innerHTML = text;
+        if (this.elemMgr.drawCountTooltipText) {
+            this.elemMgr.drawCountTooltipText.innerHTML = text;
         }
     }
 

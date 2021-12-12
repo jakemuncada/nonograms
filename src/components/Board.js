@@ -4,10 +4,11 @@ import Grid from "./Grid";
 import TopPanel from "./TopPanel";
 import LeftPanel from "./LeftPanel";
 import RulerTooltip from "./RulerTooltip";
+import RulerRect from "./RulerRect";
 import Nonogram from "../control/NonogramManager";
 import { MouseButtonEnum } from "../common/enums";
 import { adjustCellSize } from "../redux/actions/board";
-import { ELEM_ID_DRAW_TOOLTIP } from "../common/constants";
+import { ELEM_ID_DRAW_TOOLTIP, ELEM_ID_RULER_HORIZONTAL, ELEM_ID_RULER_VERTICAL } from "../common/constants";
 
 const mapStateToProps = (state) => {
     return {
@@ -150,6 +151,8 @@ class Board extends React.Component {
                     </div>
                 </div>
                 <RulerTooltip id={ELEM_ID_DRAW_TOOLTIP} />
+                <RulerRect id={ELEM_ID_RULER_VERTICAL} cellSize={cellSize} />
+                <RulerRect id={ELEM_ID_RULER_HORIZONTAL} cellSize={cellSize} />
             </div>
         );
     }

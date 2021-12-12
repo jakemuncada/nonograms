@@ -2,11 +2,13 @@ import Puzzle from "./Puzzle";
 import DrawManager from "./DrawManager";
 import ClueManager from "./ClueManager";
 import CrosshairManager from "./CrosshairManager";
+import RulerManager from "./RulerManager";
 import {
     SVG_URL_CLUE_SLASH,
     SVG_URL_FILL,
     SVG_URL_X,
 } from "../common/constants";
+import ElementManager from "./ElementManager";
 
 /**
  * Class responsible for the entire Nonograms app.
@@ -38,6 +40,12 @@ class NonogramManager {
     crosshairMgr = null;
 
     /**
+     * The RulerManager.
+     * @type {RulerManager}
+     */
+    rulerMgr = null;
+
+    /**
      * The image cache. It is only for storing the preloaded images.
      * @type {Object}
      */
@@ -49,9 +57,11 @@ class NonogramManager {
      */
     constructor(puzzle) {
         this.puzzle = puzzle;
-        this.drawMgr = new DrawManager(puzzle);
-        this.clueMgr = new ClueManager(puzzle);
-        this.crosshairMgr = new CrosshairManager(puzzle);
+        this.elemMgr = new ElementManager(puzzle);
+        this.drawMgr = new DrawManager(puzzle, this.elemMgr);
+        this.clueMgr = new ClueManager(puzzle, this.elemMgr);
+        this.rulerMgr = new RulerManager(puzzle, this.elemMgr);
+        this.crosshairMgr = new CrosshairManager(puzzle, this.elemMgr);
 
         // Preload images. The dict key is not important because we will not use them.
         this.imageCache["fill"] = new Image();
@@ -67,9 +77,7 @@ class NonogramManager {
      * Should be called after the DOM is loaded.
      */
     initialize() {
-        this.drawMgr.initialize();
-        this.clueMgr.initialize();
-        this.crosshairMgr.initialize();
+        this.elemMgr.initialize();
     }
 }
 

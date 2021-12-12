@@ -57,6 +57,15 @@ export const MouseButtonsEnum = {
     RIGHT: 2,
 }
 
+/**
+ * Enum for the ruler direction.
+ * @enum {string}
+ */
+export const RulerDir = {
+    V: "RULER_DIR_VERTICAL",
+    H: "RULER_DIR_HORIZONTAL"
+}
+
 if (Object.freeze) {
     Object.freeze(ClueStatusEnum);
     Object.freeze(ClueTypeEnum);
@@ -64,4 +73,5 @@ if (Object.freeze) {
     Object.freeze(DrawingSymbolEnum);
     Object.freeze(MouseButtonEnum);
     Object.freeze(MouseButtonEnum);
+    Object.freeze(RulerDir);
 }

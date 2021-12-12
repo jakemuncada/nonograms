@@ -163,3 +163,11 @@ span.num {
     -webkit-user-select: none;
     -ms-user-select: none;
 }
+
+.ruler-rect {
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    box-sizing: border-box;
+    border: 2px solid red;
+}
