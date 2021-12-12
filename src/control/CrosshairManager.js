@@ -66,7 +66,7 @@ export default class CrosshairManager {
     /**
      * Clear the active crosshair overlay.
      */
-    clear() {
+    hide() {
         this.currCrosshairElems.forEach(elem => {
             elem.classList.remove(CLASSNAME_CROSSHAIR_ACTIVE);
         });
@@ -74,37 +74,79 @@ export default class CrosshairManager {
     }
 
     /**
-     * Show the crosshair.
+     * Target a cell on the grid and show the crosshair.
      * @param {number} rowIdx The row index of the cell where the crosshair is targeting.
      * @param {number} colIdx The column index of the cell where the crosshair is targeting.
      */
-    show(rowIdx, colIdx) {
+    target(rowIdx, colIdx) {
         this.currRow = rowIdx;
         this.currCol = colIdx;
+        this.render(rowIdx, colIdx);
+    }
 
-        this.clear();
+    /**
+     * Target a row and show the crosshair.
+     * @param {number} rowIdx The row index to target.
+     */
+    targetRow(rowIdx) {
+        this.currRow = rowIdx;
+        this.currCol = null;
+        this.render(rowIdx, null);
+    }
 
-        if (rowIdx === null || colIdx === null) {
-            console.error("Failed to show crosshair, invalid row and column index, ", rowIdx, colIdx);
+    /**
+     * Target a column and show the crosshair.
+     * @param {number} colIdx The column index to target.
+     */
+    targetCol(colIdx) {
+        this.currRow = null;
+        this.currCol = colIdx;
+        this.render(null, colIdx);
+    }
+
+    /**
+     * Render the crosshair.
+     * @param {number} [rowIdx=null] The row index where the crosshair is located. Optional.
+     * @param {number} [colIdx=null] The column index where the crosshair is located. Optional.
+     */
+    render(rowIdx = null, colIdx = null) {
+        // Hide the crosshair.
+        this.hide();
+
+        // If the given rowIdx is not null, draw the crosshair overlay on that row.
+        if (rowIdx !== null) {
+            if (rowIdx < 0 || rowIdx >= this.puzzle.rows) {
+                console.error("Failed to render row crosshair, row is invalid:", rowIdx);
+            }
+            else {
+                const key1 = `row-${rowIdx}`;
+                if (this.elemsDict[key1]) {
+                    this.elemsDict[key1].forEach(elem => {
+                        elem.classList.add(CLASSNAME_CROSSHAIR_ACTIVE);
+                        this.currCrosshairElems.add(elem);
+                    });
+                } else {
+                    console.error(`Failed to set crosshair, element '${key1}' not found.`);
+                }
+            }
         }
 
-        const key1 = `row-${rowIdx}`;
-        const key2 = `col-${colIdx}`;
-        if (this.elemsDict[key1]) {
-            this.elemsDict[key1].forEach(elem => {
-                elem.classList.add(CLASSNAME_CROSSHAIR_ACTIVE);
-                this.currCrosshairElems.add(elem);
-            });
-        } else {
-            console.error(`Failed to set crosshair, element '${key1}' not found.`);
-        }
-        if (this.elemsDict[key2]) {
-            this.elemsDict[key2].forEach(elem => {
-                elem.classList.add(CLASSNAME_CROSSHAIR_ACTIVE);
-                this.currCrosshairElems.add(elem);
-            });
-        } else {
-            console.error(`Failed to set crosshair, element '${key2}' not found.`);
+        // If the given colIdx is not null, draw the crosshair overlay on that column.
+        if (colIdx !== null) {
+            if (colIdx < 0 || colIdx >= this.puzzle.cols) {
+                console.error("Failed to render row crosshair, col is invalid:", colIdx);
+            }
+            else {
+                const key2 = `col-${colIdx}`;
+                if (this.elemsDict[key2]) {
+                    this.elemsDict[key2].forEach(elem => {
+                        elem.classList.add(CLASSNAME_CROSSHAIR_ACTIVE);
+                        this.currCrosshairElems.add(elem);
+                    });
+                } else {
+                    console.error(`Failed to set crosshair, element '${key2}' not found.`);
+                }
+            }
         }
     }
 }

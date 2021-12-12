@@ -35,11 +35,7 @@ class Grid extends React.Component {
         if (Nonogram.drawMgr.isDrawing) {
             Nonogram.drawMgr.move(cellRow, cellCol);
         }
-        Nonogram.crosshairMgr.show(cellRow, cellCol);
-    }
-
-    handleMouseLeaveTable = () => {
-        Nonogram.crosshairMgr.clear();
+        Nonogram.crosshairMgr.target(cellRow, cellCol);
     }
 
     handleMouseUp = () => {
@@ -76,7 +72,7 @@ class Grid extends React.Component {
         }
 
         return (
-            <table id="board-table" onMouseLeave={() => this.handleMouseLeaveTable()}>
+            <table id="board-table">
                 <tbody>
                     {tableRows}
                 </tbody>

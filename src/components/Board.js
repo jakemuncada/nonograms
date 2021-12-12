@@ -92,11 +92,15 @@ class Board extends React.Component {
     disableScroll = () => {
         document.addEventListener('wheel', this.preventDefault, {
             passive: false,
-        })
+        });
     }
 
-    enableScroll = () => {
-        document.removeEventListener('wheel', this.preventDefault, false)
+    handleMouseLeave = () => {
+        // Re-enable scrolling when mouse is not hovering over the board.
+        document.removeEventListener('wheel', this.preventDefault, false);
+
+        // Hide the crosshair.
+        Nonogram.crosshairMgr.hide();
     }
 
     preventDefault = (e) => {
@@ -124,7 +128,7 @@ class Board extends React.Component {
                     onMouseEnter={() => this.disableScroll()}
                     onMouseDown={(e) => this.handleMouseDown(e)}
                     onMouseMove={(e) => this.handleMouseMove(e)}
-                    onMouseLeave={() => this.enableScroll()}
+                    onMouseLeave={() => this.handleMouseLeave()}
                     onWheel={(e) => this.handleMouseWheel(e)}>
 
                     <div id="board">

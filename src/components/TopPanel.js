@@ -49,8 +49,8 @@ export default function TopPanel(props) {
                     key={key}
                     className="cell clue-cell"
                     style={tdStyle}
-                    onMouseDown={(e) => startToggling(e, row, col)}
-                    onMouseEnter={() => continueToggling(row, col)}>
+                    onMouseDown={(e) => onMouseDown(e, row, col)}
+                    onMouseEnter={() => onMouseEnter(row, col)}>
                     <b>{num}</b>
                     <div id={overlayId} className={overlayClassName} style={overlayStyle} />
                 </td>
@@ -62,17 +62,18 @@ export default function TopPanel(props) {
     return <table id="top-table"><tbody>{tableRows}</tbody></table>;
 }
 
-const startToggling = (e, row, col) => {
+const onMouseDown = (e, row, col) => {
     if (e.button === MouseButtonEnum.LEFT || e.button === MouseButtonEnum.RIGHT) {
         Nonogram.clueMgr.startToggling(ClueTypeEnum.TOP, row, col);
     }
     document.addEventListener("mouseup", stopToggling);
 }
 
-const continueToggling = (row, col) => {
+const onMouseEnter = (row, col) => {
     if (Nonogram.clueMgr.togglingClueType === ClueTypeEnum.TOP) {
         Nonogram.clueMgr.continueToggling(ClueTypeEnum.TOP, row, col);
     }
+    Nonogram.crosshairMgr.targetCol(col);
 }
 
 const stopToggling = () => {
