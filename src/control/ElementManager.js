@@ -2,6 +2,7 @@ import { ClueTypeEnum } from "../common/enums";
 import { getCellId } from "../common/utils";
 import {
     ELEM_ID_DRAW_TOOLTIP,
+    ELEM_ID_RULER_HORIZONTAL,
     ELEM_ID_RULER_VERTICAL
 } from "../common/constants";
 
@@ -19,6 +20,12 @@ export default class ElementManager {
      * @type {Object<string, HTMLElement>}
      */
     cells = {}
+
+    /**
+     * The dictionary containing the DOM elements of the cell-contents.
+     * @type {Object<string, HTMLElement>}
+     */
+    cellContents = {}
 
     /** 
      * The DOM element of the draw tooltip.
@@ -73,8 +80,11 @@ export default class ElementManager {
         this.cells = {};
         for (let rowIdx = 0; rowIdx < this.puzzle.rows; rowIdx++) {
             for (let colIdx = 0; colIdx < this.puzzle.rows; colIdx++) {
-                const cellId = this.puzzle.getCellId(rowIdx, colIdx);
-                this.cells[cellId] = document.getElementById(`cell-${cellId}`);
+                const idNum = this.puzzle.getCellId(rowIdx, colIdx);
+                const cellId = `cell-${idNum}`;
+                const contentId = `cellcontent-${idNum}`;
+                this.cells[cellId] = document.getElementById(cellId);
+                this.cellContents[contentId] = document.getElementById(contentId);
             }
         }
 
@@ -106,7 +116,7 @@ export default class ElementManager {
 
         // Initialize the ruler rects.
         this.rulerRectV = document.getElementById(ELEM_ID_RULER_VERTICAL);
-        this.rulerRectH = document.getElementById(ELEM_ID_RULER_VERTICAL);
+        this.rulerRectH = document.getElementById(ELEM_ID_RULER_HORIZONTAL);
     }
 
     /**
@@ -120,8 +130,35 @@ export default class ElementManager {
             colIdx < 0 || colIdx >= this.puzzle.rows) {
             throw new RangeError("Invalid row/column index,", rowIdx, colIdx);
         }
-        const cellId = this.puzzle.getCellId(rowIdx, colIdx);
+        const idNum = this.puzzle.getCellId(rowIdx, colIdx);
+        const cellId = "cell-" + idNum;
         return this.cells[cellId];
+    }
+
+    /**
+     * Get the DOM element of the content of the specified cell.
+     * @param {number} rowIdx The row index of the cell.
+     * @param {number} colIdx The column index of the cell.
+     * @returns {HTMLElement} The cell-content DOM element.
+     */
+    getCellContent(rowIdx, colIdx) {
+        if (rowIdx < 0 || rowIdx >= this.puzzle.rows ||
+            colIdx < 0 || colIdx >= this.puzzle.rows) {
+            throw new RangeError("Invalid row/column index,", rowIdx, colIdx);
+        }
+        const idNum = this.puzzle.getCellId(rowIdx, colIdx);
+        const cellId = "cellcontent-" + idNum;
+        return this.cellContents[cellId];
+    }
+
+    /**
+     * Get the DOM element of the content of the specified cell.
+     * @param {number} idNum The id number of the cell.
+     * @returns {HTMLElement} The cell-content DOM element.
+     */
+    getCellContentById(idNum) {
+        const cellId = "cellcontent-" + idNum;
+        return this.cellContents[cellId];
     }
 
     /**

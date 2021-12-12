@@ -9,7 +9,7 @@ import {
 
 
 function RulerTooltip({ id }) {
-    const className = "tooltip ruler";
+    const className = "tooltip ruler noselect";
 
     const style = {
         width: RULER_TOOLTIP_WIDTH,
@@ -23,7 +23,7 @@ function RulerTooltip({ id }) {
 
     return (
         <div id={id} className={className} style={style}>
-            <span id={id + "-text"}></span>
+            <span id={id + "-text"} className="noselect"></span>
         </div>
     );
 }

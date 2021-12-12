@@ -1,9 +1,12 @@
+// eslint-disable-next-line
+import ElementManager from "./ElementManager";
 import DrawCountManager from "./DrawCountManager";
-import { DrawingDirEnum, DrawingSymbolEnum } from "../common/enums";
+import { SelectionDirEnum, DrawingSymbolEnum } from "../common/enums";
 import {
     CLASSNAME_CELL_CONTENT,
     CLASSNAME_CELL_DRAWING,
 } from "../common/constants";
+import { getSelectionInfo } from "../common/utils";
 
 
 const SYMBOL_CLASSNAMES = {
@@ -44,9 +47,9 @@ export default class DrawManager {
 
     /**
      * The current drawing direction.
-     * @type {DrawingDirEnum}
+     * @type {SelectionDirEnum}
      */
-    drawingDir = DrawingDirEnum.NONE;
+    drawingDir = SelectionDirEnum.NONE;
 
     /**
      * The symbol currently being drawn.
@@ -113,7 +116,7 @@ export default class DrawManager {
         this.eRow = sRow;
         this.eCol = sCol;
         this.isDrawing = true;
-        this.drawingDir = DrawingDirEnum.POINT;
+        this.drawingDir = SelectionDirEnum.POINT;
 
         this.countMgr.hide();
 
@@ -142,7 +145,7 @@ export default class DrawManager {
      * @param {number} currCol The column index of the cell where the cursor is currently on.
      */
     move(currRow, currCol) {
-        const [newDrawCells, newEndRow, newEndCol, dir] = this.getDrawnCells(currRow, currCol);
+        const [newDrawCells, newEndRow, newEndCol, dir] = this.getDrawnCellsInfo(currRow, currCol);
         this.eRow = newEndRow;
         this.eCol = newEndCol;
         this.drawingDir = dir;
@@ -153,7 +156,6 @@ export default class DrawManager {
             this.countMgr.update(this.sRow, this.sCol,
                 newEndRow, newEndCol, this.puzzle.board, this.drawSymbol, sCell, eCell);
         }
-
         this.renderDrawing(newDrawCells);
     }
 
@@ -162,7 +164,7 @@ export default class DrawManager {
      */
     end() {
         this.isDrawing = false;
-        this.drawingDir = DrawingDirEnum.NONE;
+        this.drawingDir = SelectionDirEnum.NONE;
         // Finalize the drawn cells by reflecting the changes onto the actual board.
         this.drawCells.forEach(cellId => {
             const [row, col] = this.puzzle.getCellRowCol(cellId);
@@ -178,7 +180,7 @@ export default class DrawManager {
      */
     cancel() {
         this.isDrawing = false;
-        this.drawingDir = DrawingDirEnum.NONE;
+        this.drawingDir = SelectionDirEnum.NONE;
         this.countMgr.hide();
         this.renderDrawing();
     }
@@ -216,7 +218,7 @@ export default class DrawManager {
      * @param {boolean} isDrawing True if the cell is being drawn on. False otherwise.
      */
     renderCell(cellId, symbolId, isDrawing) {
-        const elem = this.elemMgr.cells[cellId];
+        const elem = this.elemMgr.getCellContentById(cellId);
         if (elem !== undefined && elem !== null) {
             elem.className = CLASSNAME_CELL_CONTENT;
 
@@ -232,6 +234,9 @@ export default class DrawManager {
                 elem.classList.add(symbolClassName);
             }
         }
+        else {
+            console.error(`Failed to render cell ${cellId}, cannot find cell.`);
+        }
     }
 
     /**
@@ -246,51 +251,7 @@ export default class DrawManager {
      * @param {number} currCol The column index of the cell where the cursor is currently on.
      * @returns {Array} The array of items as described above.
      */
-    getDrawnCells(currRow, currCol) {
-        const sRow = this.sRow;
-        const sCol = this.sCol;
-
-        let drawCells = new Set();
-        drawCells.add(this.puzzle.getCellId(sRow, sCol));
-
-        if (currRow === sRow && currCol === sCol) {
-            return [drawCells, sRow, sCol, DrawingDirEnum.POINT];
-        }
-
-        const horiDelta = currCol - sCol;
-        const vertDelta = currRow - sRow;
-        const isVerticalDraw = Math.abs(vertDelta) > Math.abs(horiDelta);
-
-        let dir;
-        let newDrawEndRow = sRow;
-        let newDrawEndCol = sCol;
-
-        // Horizontal Draw
-        if (isVerticalDraw === false) {
-            dir = DrawingDirEnum.HORIZONTAL;
-            let col = Math.min(sCol, currCol);
-            let end = Math.max(sCol, currCol);
-            newDrawEndCol = currCol;
-            while (col <= end) {
-                let cellId = this.puzzle.getCellId(sRow, col);
-                drawCells.add(cellId);
-                col += 1;
-            }
-
-        }
-        // Vertical Draw
-        else {
-            dir = DrawingDirEnum.VERTICAL;
-            let row = Math.min(sRow, currRow);
-            let end = Math.max(sRow, currRow);
-            newDrawEndRow = currRow;
-            while (row <= end) {
-                let cellId = this.puzzle.getCellId(row, sCol);
-                drawCells.add(cellId);
-                row += 1;
-            }
-        }
-
-        return [drawCells, newDrawEndRow, newDrawEndCol, dir];
+    getDrawnCellsInfo(currRow, currCol) {
+        return getSelectionInfo(this.sRow, this.sCol, currRow, currCol, this.puzzle.cols);
     }
 }

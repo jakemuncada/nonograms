@@ -1,3 +1,5 @@
+import { SelectionDirEnum } from "./enums";
+
 /**
  * Returns the ID of the cell.
  * @param {number} cols The number of columns of the board.
@@ -60,4 +62,67 @@ export const getClueFontSize = (cellSize) => {
         fontSize = 9;
     }
     return fontSize;
+}
+
+/**
+ * When the user selects/highlights a line of cells,
+ * calculate and return an array containing the selection information:
+ * 
+ * - The set containing the IDs of the selected cells.
+ * - The row index of the cell where the selection ends.
+ * - The column index of the cell where the selection ends.
+ * - The selection direction.
+ * 
+ * @param {number} sRow The row index of the cell where the selection started.
+ * @param {number} sCol The column index of the cell where the selection started.
+ * @param {number} currRow The row index of the cell where the cursor is currently on.
+ * @param {number} currCol The column index of the cell where the cursor is currently on.
+ * @param {number} cols The number of columns of the puzzle.
+ * @returns {Array} The array of items as described above.
+ */
+export const getSelectionInfo = (sRow, sCol, currRow, currCol, cols) => {
+
+    let drawCells = new Set();
+    drawCells.add(getCellId(cols, sRow, sCol));
+
+    // If the cursor is on the starting cell.
+    if (currRow === sRow && currCol === sCol) {
+        return [drawCells, sRow, sCol, SelectionDirEnum.POINT];
+    }
+
+    const horiDelta = currCol - sCol;
+    const vertDelta = currRow - sRow;
+    const isVerticalDraw = Math.abs(vertDelta) > Math.abs(horiDelta);
+
+    let dir;
+    let newDrawEndRow = sRow;
+    let newDrawEndCol = sCol;
+
+    // Horizontal Draw
+    if (isVerticalDraw === false) {
+        dir = SelectionDirEnum.HORIZONTAL;
+        let col = Math.min(sCol, currCol);
+        let end = Math.max(sCol, currCol);
+        newDrawEndCol = currCol;
+        while (col <= end) {
+            let cellId = getCellId(cols, sRow, col);
+            drawCells.add(cellId);
+            col += 1;
+        }
+
+    }
+    // Vertical Draw
+    else {
+        dir = SelectionDirEnum.VERTICAL;
+        let row = Math.min(sRow, currRow);
+        let end = Math.max(sRow, currRow);
+        newDrawEndRow = currRow;
+        while (row <= end) {
+            let cellId = getCellId(cols, row, sCol);
+            drawCells.add(cellId);
+            row += 1;
+        }
+    }
+
+    return [drawCells, newDrawEndRow, newDrawEndCol, dir];
 }

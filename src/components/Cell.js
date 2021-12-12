@@ -7,6 +7,8 @@ function Cell(props) {
         handleMouseDown, handleMouseEnter
     } = props;
 
+    const cellId = `cell-${id}`;
+    const contentId = `cellcontent-${id}`;
     const tdStyle = {
         width: cellSize,
         height: cellSize,
@@ -33,13 +35,14 @@ function Cell(props) {
     return (
         <td
             key={row * cols + col}
+            id={cellId}
             style={tdStyle}
-            className="cell grid-cell nodrag"
+            className="cell grid-cell noselect"
             onMouseDown={(e) => handleMouseDown(e, row, col)}
             onMouseEnter={() => handleMouseEnter(row, col)}
         >
 
-            <div id={`cell-${id}`} className="cell-content" style={contentStyle} />
+            <div id={contentId} className="cell-content" style={contentStyle} />
             <div className={overlayClassName} style={overlayStyle} />
             {coordDisplay}
         </td>

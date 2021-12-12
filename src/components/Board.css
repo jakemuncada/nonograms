@@ -110,10 +110,6 @@ table {
     padding: 0;
 }
 
-svg {
-    float: left;
-}
-
 .clue-cell {
     position: relative;
     color: black;
@@ -156,7 +152,7 @@ span.num {
     transition: transform 0.5s ease-in-out 0.03s;
 }
 
-.nodrag {
+.noselect {
     user-select: none;
     -moz-user-select: none;
     -webkit-user-drag: none;
@@ -165,9 +161,10 @@ span.num {
 }
 
 .ruler-rect {
-    position: fixed;
+    position: absolute;
     left: 0px;
     top: 0px;
-    box-sizing: border-box;
+    /* box-sizing: border-box; */
     border: 2px solid red;
+    pointer-events: none;
 }

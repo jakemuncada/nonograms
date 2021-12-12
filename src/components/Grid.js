@@ -28,18 +28,24 @@ class Grid extends React.Component {
             }
         }
 
+        // Use the ruler.
+        Nonogram.rulerMgr.start(cellRow, cellCol);
+
         document.addEventListener("mouseup", this.handleMouseUp);
     }
 
     handleMouseEnterOnCell = (cellRow, cellCol) => {
         if (Nonogram.drawMgr.isDrawing) {
             Nonogram.drawMgr.move(cellRow, cellCol);
+            Nonogram.rulerMgr.measureLine()
         }
         Nonogram.crosshairMgr.target(cellRow, cellCol);
+        Nonogram.rulerMgr.move(cellRow, cellCol);
     }
 
     handleMouseUp = () => {
         Nonogram.drawMgr.end();
+        Nonogram.rulerMgr.end();
         document.removeEventListener("mouseup", this.handleMouseUp);
     }
 

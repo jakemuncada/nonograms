@@ -18,10 +18,10 @@ export const ClueTypeEnum = {
 }
 
 /** 
- * Enum for the drawing direction.
+ * Enum for the selection direction.
  * @enum {string}
  */
-export const DrawingDirEnum = {
+export const SelectionDirEnum = {
     NONE: "NONE",
     POINT: "POINT",
     VERTICAL: "VERTICAL",
@@ -69,7 +69,7 @@ export const RulerDir = {
 if (Object.freeze) {
     Object.freeze(ClueStatusEnum);
     Object.freeze(ClueTypeEnum);
-    Object.freeze(DrawingDirEnum);
+    Object.freeze(SelectionDirEnum);
     Object.freeze(DrawingSymbolEnum);
     Object.freeze(MouseButtonEnum);
     Object.freeze(MouseButtonEnum);

@@ -67,28 +67,32 @@ class DrawCountManager {
             return;
         }
 
-        // Update the position.
-        const [posX, posY] = this.getPosition(sRow, sCol, eRow, eCol, sCell, eCell);
-        const transform = `translate(${posX}px, ${posY}px)`;
-        this.elemMgr.drawCountTooltipMain.style.transform = transform;
+        try {
+            // Update the position.
+            const [posX, posY] = this.getPosition(sRow, sCol, eRow, eCol, sCell, eCell);
+            const transform = `translate(${posX}px, ${posY}px)`;
+            this.elemMgr.drawCountTooltipMain.style.transform = transform;
 
-        // Update the text.
-        const text = this.getText(sRow, sCol, eRow, eCol, board, drawSymbol);
-        this.setText(text);
+            // Update the text.
+            const text = this.getText(sRow, sCol, eRow, eCol, board, drawSymbol);
+            this.setText(text);
 
-        // Update the width.
-        this.updateWidth(text);
+            // Update the width.
+            this.updateWidth(text);
 
-        // If the tooltip is not yet visible, remove its transition animation
-        // so that it will initially be displayed at the correct position.
-        if (!this.elemMgr.drawCountTooltipMain.classList.contains(CLASSNAME_VISIBLE)) {
-            this.elemMgr.drawCountTooltipMain.classList.remove(CLASSNAME_TRANSITION);
-            this.elemMgr.drawCountTooltipMain.classList.add(CLASSNAME_VISIBLE);
-        }
-        // If the tooltip is already visible, add its transition animation
-        // so that it will smoothly animate to the correct position.
-        else {
-            this.elemMgr.drawCountTooltipMain.classList.add(CLASSNAME_TRANSITION);
+            // If the tooltip is not yet visible, remove its transition animation
+            // so that it will initially be displayed at the correct position.
+            if (!this.elemMgr.drawCountTooltipMain.classList.contains(CLASSNAME_VISIBLE)) {
+                this.elemMgr.drawCountTooltipMain.classList.remove(CLASSNAME_TRANSITION);
+                this.elemMgr.drawCountTooltipMain.classList.add(CLASSNAME_VISIBLE);
+            }
+            // If the tooltip is already visible, add its transition animation
+            // so that it will smoothly animate to the correct position.
+            else {
+                this.elemMgr.drawCountTooltipMain.classList.add(CLASSNAME_TRANSITION);
+            }
+        } catch (e) {
+            console.error("Failed to render the DrawCount tooltip,", e);
         }
     }
 
@@ -104,12 +108,10 @@ class DrawCountManager {
      */
     getPosition(sRow, sCol, eRow, eCol, sCell, eCell) {
         if (sCell === null || sCell === undefined) {
-            console.error("Cannot get draw counter position, cell1 not found.");
-            return;
+            throw new ReferenceError("Start cell not found.");
         }
         if (eCell === null || eCell === undefined) {
-            console.error("Cannot get draw counter position, cell2 not found.");
-            return;
+            throw new ReferenceError("End cell not found.");
         }
 
         let posX, posY, margin;
